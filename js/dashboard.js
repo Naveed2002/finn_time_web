@@ -226,6 +226,24 @@ function updateStockTableWithMockData() {
             ]
         };
         
+        // Store mock data globally for other pages to access
+        console.log('Storing mock stock data globally:', mockData.data);
+        window.finnTimeStockData = mockData.data;
+        console.log('Global mock data stored:', window.finnTimeStockData);
+        
+        // Also store in localStorage for persistence
+        try {
+            const storageData = {
+                data: mockData.data,
+                timestamp: Date.now()
+            };
+            console.log('Storing mock stock data in localStorage:', storageData);
+            localStorage.setItem('finnTimeStockData', JSON.stringify(storageData));
+            console.log('Mock data stored in localStorage');
+        } catch (e) {
+            console.error('Failed to store mock stock data in localStorage:', e);
+        }
+        
         // Update the table with mock data
         updateStockTable(mockData);
     } catch (error) {
@@ -325,6 +343,25 @@ async function fetchStockData() {
         if (individualResponses.length > 0) {
             const combinedResponse = { data: individualResponses };
             console.log('Individual requests response:', combinedResponse);
+            
+            // Store data globally for other pages to access
+            console.log('Storing individual stock data globally:', individualResponses);
+            window.finnTimeStockData = individualResponses;
+            console.log('Global data stored:', window.finnTimeStockData);
+            
+            // Also store in localStorage for persistence
+            try {
+                const storageData = {
+                    data: individualResponses,
+                    timestamp: Date.now()
+                };
+                console.log('Storing individual stock data in localStorage:', storageData);
+                localStorage.setItem('finnTimeStockData', JSON.stringify(storageData));
+                console.log('Individual data stored in localStorage');
+            } catch (e) {
+                console.error('Failed to store individual stock data in localStorage:', e);
+            }
+            
             updateStockTable(combinedResponse);
         } else {
             // If still no data, try with default US stocks
@@ -349,6 +386,25 @@ async function fetchStockData() {
             if (defaultResponses.length > 0) {
                 const combinedResponse = { data: defaultResponses };
                 console.log('Default symbols response:', combinedResponse);
+                
+                // Store data globally for other pages to access
+                console.log('Storing default stock data globally:', defaultResponses);
+                window.finnTimeStockData = defaultResponses;
+                console.log('Global data stored:', window.finnTimeStockData);
+                
+                // Also store in localStorage for persistence
+                try {
+                    const storageData = {
+                        data: defaultResponses,
+                        timestamp: Date.now()
+                    };
+                    console.log('Storing default stock data in localStorage:', storageData);
+                    localStorage.setItem('finnTimeStockData', JSON.stringify(storageData));
+                    console.log('Default data stored in localStorage');
+                } catch (e) {
+                    console.error('Failed to store default stock data in localStorage:', e);
+                }
+                
                 updateStockTable(combinedResponse);
             } else {
                 // If still no data, use mock data
