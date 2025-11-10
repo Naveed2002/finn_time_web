@@ -39,22 +39,31 @@ document.addEventListener('DOMContentLoaded', () => {
 // Load all stocks data from shared storage
 function loadAllStocksData() {
     try {
+        console.log('Loading all stocks data');
         // Check global data first
+        console.log('Global data:', window.finnTimeStockData);
         if (window.finnTimeStockData && window.finnTimeStockData.length > 0) {
+            console.log('Using global data for all stocks');
             allStocksData = window.finnTimeStockData;
             displayAllStocks();
             return;
         }
         
         // Check localStorage
+        console.log('Checking localStorage');
         const storedData = localStorage.getItem('finnTimeStockData');
+        console.log('Stored data from localStorage:', storedData);
         if (storedData) {
             const parsed = JSON.parse(storedData);
+            console.log('Parsed data:', parsed);
             // Check if data is recent (less than 1 hour old)
             if (Date.now() - parsed.timestamp < 3600000) {
+                console.log('Using localStorage data for all stocks');
                 allStocksData = parsed.data;
                 displayAllStocks();
                 return;
+            } else {
+                console.log('Data is too old, timestamp:', parsed.timestamp);
             }
         }
         
@@ -397,20 +406,34 @@ async function loadStockData(symbol, timeRange) {
         let stockData = null;
         
         // Check global data first
+        console.log('Checking global data:', window.finnTimeStockData);
         if (window.finnTimeStockData) {
+            console.log('Global data exists, searching for symbol:', symbol);
             stockData = window.finnTimeStockData.find(item => item.symbol === symbol);
+            console.log('Found in global data:', stockData);
+        } else {
+            console.log('No global data found');
         }
         
         // If not found in global data, check localStorage
         if (!stockData) {
+            console.log('Checking localStorage for shared data');
             try {
                 const storedData = localStorage.getItem('finnTimeStockData');
+                console.log('Stored data from localStorage:', storedData);
                 if (storedData) {
                     const parsed = JSON.parse(storedData);
+                    console.log('Parsed data:', parsed);
                     // Check if data is recent (less than 1 hour old)
                     if (Date.now() - parsed.timestamp < 3600000) {
+                        console.log('Data is recent, searching for symbol:', symbol);
                         stockData = parsed.data.find(item => item.symbol === symbol);
+                        console.log('Found in localStorage:', stockData);
+                    } else {
+                        console.log('Data is too old, timestamp:', parsed.timestamp);
                     }
+                } else {
+                    console.log('No stored data found in localStorage');
                 }
             } catch (e) {
                 console.error('Error reading from localStorage:', e);
