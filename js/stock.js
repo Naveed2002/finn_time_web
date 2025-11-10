@@ -28,9 +28,12 @@ document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
     
     // Try to load all stocks data from shared storage
-    loadAllStocksData().catch(error => {
-        console.error('Error in loadAllStocksData:', error);
-    });
+    // Wait a bit for location data to be set by main.js
+    setTimeout(() => {
+        loadAllStocksData().catch(error => {
+            console.error('Error in loadAllStocksData:', error);
+        });
+    }, 2000);
     
     // Load initial data with a delay to avoid rate limiting
     setTimeout(() => {
@@ -42,6 +45,14 @@ document.addEventListener('DOMContentLoaded', () => {
 async function loadAllStocksData() {
     try {
         console.log('Loading all stocks data');
+        
+        // Check if we have user location data
+        const hasLocationData = window.userLocation && (window.userLocation.country || window.userLocation.country_name);
+        console.log('User location data available:', hasLocationData);
+        if (hasLocationData) {
+            console.log('User location:', window.userLocation.country || window.userLocation.country_name);
+        }
+        
         // Check global data first
         console.log('Global data:', window.finnTimeStockData);
         if (window.finnTimeStockData && window.finnTimeStockData.length > 0) {
@@ -60,10 +71,32 @@ async function loadAllStocksData() {
             console.log('Parsed data:', parsed);
             // Check if data is recent (less than 1 hour old)
             if (Date.now() - parsed.timestamp < 3600000) {
-                console.log('Using localStorage data for all stocks');
-                allStocksData = parsed.data;
-                displayAllStocks();
-                return;
+                // Check if the stored data matches the current location
+                if (hasLocationData) {
+                    const locationStocks = getLocationBasedStocks();
+                    const storedSymbols = parsed.data.map(item => item.symbol);
+                    const locationSymbols = locationStocks.slice(0, 3);
+                    
+                    // Check if stored data contains location-appropriate stocks
+                    const matchesLocation = locationSymbols.every(symbol => storedSymbols.includes(symbol));
+                    console.log('Stored data matches location:', matchesLocation);
+                    console.log('Location stocks:', locationSymbols);
+                    console.log('Stored stocks:', storedSymbols);
+                    
+                    if (matchesLocation) {
+                        console.log('Using localStorage data for all stocks');
+                        allStocksData = parsed.data;
+                        displayAllStocks();
+                        return;
+                    } else {
+                        console.log('Stored data does not match location, fetching location-specific stocks');
+                    }
+                } else {
+                    console.log('Using localStorage data for all stocks (no location data)');
+                    allStocksData = parsed.data;
+                    displayAllStocks();
+                    return;
+                }
             } else {
                 console.log('Data is too old, timestamp:', parsed.timestamp);
             }
