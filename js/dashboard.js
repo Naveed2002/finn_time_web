@@ -94,8 +94,10 @@ function getLocationBasedSymbols() {
 // Get location-based stock symbols
 function getLocationBasedStocks() {
     // Check if we have user location data
+    console.log('Checking user location data:', window.userLocation);
     if (window.userLocation && (window.userLocation.country || window.userLocation.country_name)) {
         const country = window.userLocation.country || window.userLocation.country_name;
+        console.log('Using country:', country);
         
         // Map countries to their major companies - only local/regional stocks
         const countryStocks = {
@@ -114,10 +116,13 @@ function getLocationBasedStocks() {
         };
         
         // Return location-specific stocks or default to US
-        return countryStocks[country] || ['AAPL', 'TSLA', 'GOOGL', 'AMZN', 'MSFT'];
+        const stocks = countryStocks[country] || ['AAPL', 'TSLA', 'GOOGL', 'AMZN', 'MSFT'];
+        console.log('Returning stocks for', country, ':', stocks);
+        return stocks;
     }
     
     // Default to US stocks if no location data
+    console.log('No location data found, returning default US stocks');
     return ['AAPL', 'TSLA', 'GOOGL', 'AMZN', 'MSFT'];
 }
 
@@ -198,6 +203,7 @@ async function fetchStockData() {
         console.log("Fetching stock data for table from MarketStack API...");
         
         // Get location-based stock symbols
+        console.log('Current userLocation:', window.userLocation);
         const symbols = getLocationBasedStocks();
         console.log('Requesting stock data for symbols:', symbols);
         
