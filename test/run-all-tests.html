@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finn Time - All Tests</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 20px;
+            background-color: #121212;
+            color: #f0f0f0;
+        }
+        .test-container {
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+        }
+        .test-link {
+            display: block;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #2d2d2d;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #4caf50;
+        }
+        .test-link:hover {
+            background-color: #3d3d3d;
+            color: #66bb6a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mb-4">Finn Time - All Tests</h1>
+        
+        <div class="test-container">
+            <h2>Test Suite Navigation</h2>
+            <p>Click on any of the links below to run specific test suites:</p>
+            
+            <div class="test-section">
+                <h4>Unit Tests</h4>
+                <a href="unit-tests.html" class="test-link" target="_blank">
+                    <i class="fas fa-vial me-2"></i>Run Unit Tests
+                </a>
+                <p>Tests individual functions and components in isolation</p>
+            </div>
+            
+            <div class="test-section">
+                <h4>Integration Tests</h4>
+                <a href="integration-tests.html" class="test-link" target="_blank">
+                    <i class="fas fa-cogs me-2"></i>Run Integration Tests
+                </a>
+                <p>Tests how different components work together</p>
+            </div>
+            
+            <div class="test-section">
+                <h4>Full Test Suite</h4>
+                <a href="test-suite.html" class="test-link" target="_blank">
+                    <i class="fas fa-flask me-2"></i>Run Full Test Suite
+                </a>
+                <p>Comprehensive testing of all application features</p>
+            </div>
+        </div>
+        
+        <div class="test-container">
+            <h2>How to Run Tests</h2>
+            <ol>
+                <li>Open any of the test files above in your browser</li>
+                <li>Click the "Run Tests" button</li>
+                <li>View the results in the output section</li>
+                <li>Check the console for detailed logs</li>
+            </ol>
+            
+            <h3 class="mt-4">Manual Testing</h3>
+            <p>You can also manually test the application by:</p>
+            <ul>
+                <li>Opening <a href="../index.html" target="_blank">index.html</a> in your browser</li>
+                <li>Verifying location detection works (should show your country)</li>
+                <li>Checking that date and time are displayed</li>
+                <li>Confirming that market data loads for your region</li>
+                <li>Testing navigation between pages</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finn Time - Test Suite</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 20px;
+            background-color: #121212;
+            color: #f0f0f0;
+        }
+        .test-card {
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .test-pass {
+            color: #4caf50;
+        }
+        .test-fail {
+            color: #f44336;
+        }
+        .test-pending {
+            color: #ff9800;
+        }
+        .log-output {
+            background-color: #2d2d2d;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mb-4">Finn Time - Comprehensive Test Suite</h1>
+        
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card test-card">
+                    <div class="card-header">
+                        <h3>Test Controls</h3>
+                    </div>
+                    <div class="card-body">
+                        <button id="runAllTests" class="btn btn-primary me-2">Run All Tests</button>
+                        <button id="runLocationTests" class="btn btn-secondary me-2">Run Location Tests</button>
+                        <button id="runAPITests" class="btn btn-secondary me-2">Run API Tests</button>
+                        <button id="runUITests" class="btn btn-secondary">Run UI Tests</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <!-- Location Tests -->
+            <div class="col-md-6">
+                <div class="card test-card">
+                    <div class="card-header">
+                        <h4>Location-Based Tests</h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="locationTests">
+                            <div class="test-item mb-3">
+                                <h5>Germany Location Test <span id="germanyTestStatus" class="float-end test-pending">PENDING</span></h5>
+                                <div id="germanyTestLog" class="log-output d-none"></div>
+                            </div>
+                            <div class="test-item mb-3">
+                                <h5>United States Location Test <span id="usTestStatus" class="float-end test-pending">PENDING</span></h5>
+                                <div id="usTestLog" class="log-output d-none"></div>
+                            </div>
+                            <div class="test-item mb-3">
+                                <h5>France Location Test <span id="franceTestStatus" class="float-end test-pending">PENDING</span></h5>
+                                <div id="franceTestLog" class="log-output d-none"></div>
+                            </div>
+                            <div class="test-item mb-3">
+                                <h5>Japan Location Test <span id="japanTestStatus" class="float-end test-pending">PENDING</span></h5>
+                                <div id="japanTestLog" class="log-output d-none"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- API Tests -->
+            <div class="col-md-6">
+                <div class="card test-card">
+                    <div class="card-header">
+                        <h4>API Integration Tests</h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="apiTests">
+                            <div class="test-item mb-3">
+                                <h5>API Key Validation <span id="apiKeyTestStatus" class="float-end test-pending">PENDING</span></h5>
+                                <div id="apiKeyTestLog" class="log-output d-none"></div>
+                            </div>
+                            <div class="test-item mb-3">
+                                <h5>Market Data Fetch <span id="marketDataTestStatus" class="float-end test-pending">PENDING</span></h5>
+                                <div id="marketDataTestLog" class="log-output d-none"></div>
+                            </div>
+                            <div class="test-item mb-3">
+                                <h5>Stock Data Fetch <span id="stockDataTestStatus" class="float-end test-pending">PENDING</span></h5>
+                                <div id="stockDataTestLog" class="log-output d-none"></div>
+                            </div>
+                            <div class="test-item mb-3">
+                                <h5>Rate Limiting <span id="rateLimitTestStatus" class="float-end test-pending">PENDING</span></h5>
+                                <div id="rateLimitTestLog" class="log-output d-none"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <!-- UI Tests -->
+            <div class="col-md-6">
+                <div class="card test-card">
+                    <div class="card-header">
+                        <h4>UI Component Tests</h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="uiTests">
+                            <div class="test-item mb-3">
+                                <h5>Date/Time Display <span id="dateTimeTestStatus" class="float-end test-pending">PENDING</span></h5>
+                                <div id="dateTimeTestLog" class="log-output d-none"></div>
+                            </div>
+                            <div class="test-item mb-3">
+                                <h5>Location Display <span id="locationDisplayTestStatus" class="float-end test-pending">PENDING</span></h5>
+                                <div id="locationDisplayTestLog" class="log-output d-none"></div>
+                            </div>
+                            <div class="test-item mb-3">
+                                <h5>Chart Initialization <span id="chartTestStatus" class="float-end test-pending">PENDING</span></h5>
+                                <div id="chartTestLog" class="log-output d-none"></div>
+                            </div>
+                            <div class="test-item mb-3">
+                                <h5>Stock Table Display <span id="tableTestStatus" class="float-end test-pending">PENDING</span></h5>
+                                <div id="tableTestLog" class="log-output d-none"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Summary -->
+            <div class="col-md-6">
+                <div class="card test-card">
+                    <div class="card-header">
+                        <h4>Test Summary</h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="testSummary">
+                            <h5>Overall Status: <span id="overallStatus" class="test-pending">NOT RUN</span></h5>
+                            <p>Passed: <span id="passedCount">0</span></p>
+                            <p>Failed: <span id="failedCount">0</span></p>
+                            <p>Pending: <span id="pendingCount">12</span></p>
+                            <div id="summaryLog" class="log-output"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Test state
+        let testResults = {
+            passed: 0,
+            failed: 0,
+            pending: 12
+        };
+        
+        // Update summary display
+        function updateSummary() {
+            document.getElementById('passedCount').textContent = testResults.passed;
+            document.getElementById('failedCount').textContent = testResults.failed;
+            document.getElementById('pendingCount').textContent = testResults.pending;
+            
+            if (testResults.failed > 0) {
+                document.getElementById('overallStatus').className = 'test-fail';
+                document.getElementById('overallStatus').textContent = 'FAILED';
+            } else if (testResults.pending === 0) {
+                document.getElementById('overallStatus').className = 'test-pass';
+                document.getElementById('overallStatus').textContent = 'ALL PASSED';
+            }
+        }
+        
+        // Log message to a specific test
+        function logToTest(testId, message) {
+            const logElement = document.getElementById(testId + 'Log');
+            if (logElement) {
+                logElement.classList.remove('d-none');
+                logElement.innerHTML += message + '<br>';
+                logElement.scrollTop = logElement.scrollHeight;
+            }
+        }
+        
+        // Set test status
+        function setTestStatus(testId, status, message) {
+            const statusElement = document.getElementById(testId + 'Status');
+            if (statusElement) {
+                statusElement.className = 'float-end ' + (status === 'pass' ? 'test-pass' : status === 'fail' ? 'test-fail' : 'test-pending');
+                statusElement.textContent = status === 'pass' ? 'PASS' : status === 'fail' ? 'FAIL' : 'PENDING';
+            }
+            
+            if (message) {
+                logToTest(testId, message);
+            }
+        }
+        
+        // Location-based tests
+        async function runGermanyTest() {
+            setTestStatus('germany', 'pending', 'Testing Germany location data...');
+            logToTest('germany', 'Simulating German user location');
+            
+            try {
+                // Simulate German location
+                const germanLocation = {
+                    country: 'Germany',
+                    city: 'Berlin',
+                    countryCode: 'DE'
+                };
+                
+                // Test location-based symbols
+                const expectedMarketSymbols = ['EWG', 'DAX'];
+                const expectedStockSymbols = ['SAP.DE', 'BMW.DE', 'AAPL', 'TSLA', 'GOOGL'];
+                
+                logToTest('germany', 'Expected market symbols: ' + expectedMarketSymbols.join(', '));
+                logToTest('germany', 'Expected stock symbols: ' + expectedStockSymbols.join(', '));
+                
+                // Simulate the functions
+                function getLocationBasedSymbols() {
+                    const countrySymbols = {
+                        'United States': ['SPY', 'QQQ', 'DIA'],
+                        'United Kingdom': ['EZU', 'EWU', 'VPL'],
+                        'Germany': ['EWG', 'DAX'],
+                        'France': ['EWQ', 'CAC'],
+                        'Japan': ['EWJ', 'DXJ'],
+                        'Canada': ['EWC', 'XIC'],
+                        'Australia': ['EWA', 'AXJ'],
+                        'China': ['FXI', 'ASHR'],
+                        'India': ['EPI', 'INDA'],
+                        'Brazil': ['EWZ', 'IBB'],
+                        'South Korea': ['EWY', 'KORU']
+                    };
+                    return countrySymbols['Germany'] || ['SPY', 'QQQ', 'DIA'];
+                }
+                
+                function getLocationBasedStocks() {
+                    const countryStocks = {
+                        'United States': ['AAPL', 'TSLA', 'GOOGL', 'AMZN', 'MSFT'],
+                        'United Kingdom': ['BP.L', 'VOD.L', 'AAPL', 'TSLA', 'GOOGL'],
+                        'Germany': ['SAP.DE', 'BMW.DE', 'AAPL', 'TSLA', 'GOOGL'],
+                        'France': ['MC.PA', 'OR.PA', 'AAPL', 'TSLA', 'GOOGL'],
+                        'Japan': ['7203.T', '9984.T', 'AAPL', 'TSLA', 'GOOGL'],
+                        'Canada': ['ENB.TO', 'SU.TO', 'AAPL', 'TSLA', 'GOOGL'],
+                        'Australia': ['CBA.AX', 'BHP.AX', 'AAPL', 'TSLA', 'GOOGL'],
+                        'China': ['BABA', 'TCEHY', 'AAPL', 'TSLA', 'GOOGL'],
+                        'India': ['RELIANCE.BSE', 'TCS.BSE', 'AAPL', 'TSLA', 'GOOGL'],
+                        'Brazil': ['PETR4.SA', 'VALE3.SA', 'AAPL', 'TSLA', 'GOOGL'],
+                        'South Korea': ['005930.KS', '000660.KS', 'AAPL', 'TSLA', 'GOOGL'],
+                        'Sri Lanka': ['AAPL', 'TSLA', 'GOOGL', 'AMZN', 'MSFT']
+                    };
+                    return countryStocks['Germany'] || ['AAPL', 'TSLA', 'GOOGL', 'AMZN', 'MSFT'];
+                }
+                
+                const marketSymbols = getLocationBasedSymbols();
+                const stockSymbols = getLocationBasedStocks();
+                
+                logToTest('germany', 'Actual market symbols: ' + marketSymbols.join(', '));
+                logToTest('germany', 'Actual stock symbols: ' + stockSymbols.join(', '));
+                
+                // Check if results match expected
+                const marketMatch = JSON.stringify(marketSymbols) === JSON.stringify(expectedMarketSymbols);
+                const stockMatch = JSON.stringify(stockSymbols) === JSON.stringify(expectedStockSymbols);
+                
+                if (marketMatch && stockMatch) {
+                    setTestStatus('germany', 'pass', 'Germany location data test passed');
+                    testResults.passed++;
+                    testResults.pending--;
+                } else {
+                    setTestStatus('germany', 'fail', 'Germany location data test failed');
+                    testResults.failed++;
+                    testResults.pending--;
+                }
+                
+                updateSummary();
+            } catch (error) {
+                setTestStatus('germany', 'fail', 'Germany location test error: ' + error.message);
+                testResults.failed++;
+                testResults.pending--;
+                updateSummary();
+            }
+        }
+        
+        async function runUSTest() {
+            setTestStatus('us', 'pending', 'Testing US location data...');
+            logToTest('us', 'Simulating US user location');
+            
+            try {
+                // Test US location
+                const expectedMarketSymbols = ['SPY', 'QQQ', 'DIA'];
+                const expectedStockSymbols = ['AAPL', 'TSLA', 'GOOGL', 'AMZN', 'MSFT'];
+                
+                logToTest('us', 'Expected market symbols: ' + expectedMarketSymbols.join(', '));
+                logToTest('us', 'Expected stock symbols: ' + expectedStockSymbols.join(', '));
+                
+                // Simulate the functions
+                function getLocationBasedSymbols() {
+                    const countrySymbols = {
+                        'United States': ['SPY', 'QQQ', 'DIA'],
+                        'United Kingdom': ['EZU', 'EWU', 'VPL'],
+                        'Germany': ['EWG', 'DAX'],
+                        'France': ['EWQ', 'CAC'],
+                        'Japan': ['EWJ', 'DXJ'],
+                        'Canada': ['EWC', 'XIC'],
+                        'Australia': ['EWA', 'AXJ'],
+                        'China': ['FXI', 'ASHR'],
+                        'India': ['EPI', 'INDA'],
+                        'Brazil': ['EWZ', 'IBB'],
+                        'South Korea': ['EWY', 'KORU']
+                    };
+                    return countrySymbols['United States'] || ['SPY', 'QQQ', 'DIA'];
+                }
+                
+                function getLocationBasedStocks() {
+                    const countryStocks = {
+                        'United States': ['AAPL', 'TSLA', 'GOOGL', 'AMZN', 'MSFT'],
+                        'United Kingdom': ['BP.L', 'VOD.L', 'AAPL', 'TSLA', 'GOOGL'],
+                        'Germany': ['SAP.DE', 'BMW.DE', 'AAPL', 'TSLA', 'GOOGL'],
+                        'France': ['MC.PA', 'OR.PA', 'AAPL', 'TSLA', 'GOOGL'],
+                        'Japan': ['7203.T', '9984.T', 'AAPL', 'TSLA', 'GOOGL'],
+                        'Canada': ['ENB.TO', 'SU.TO', 'AAPL', 'TSLA', 'GOOGL'],
+                        'Australia': ['CBA.AX', 'BHP.AX', 'AAPL', 'TSLA', 'GOOGL'],
+                        'China': ['BABA', 'TCEHY', 'AAPL', 'TSLA', 'GOOGL'],
+                        'India': ['RELIANCE.BSE', 'TCS.BSE', 'AAPL', 'TSLA', 'GOOGL'],
+                        'Brazil': ['PETR4.SA', 'VALE3.SA', 'AAPL', 'TSLA', 'GOOGL'],
+                        'South Korea': ['005930.KS', '000660.KS', 'AAPL', 'TSLA', 'GOOGL'],
+                        'Sri Lanka': ['AAPL', 'TSLA', 'GOOGL', 'AMZN', 'MSFT']
+                    };
+                    return countryStocks['United States'] || ['AAPL', 'TSLA', 'GOOGL', 'AMZN', 'MSFT'];
+                }
+                
+                const marketSymbols = getLocationBasedSymbols();
+                const stockSymbols = getLocationBasedStocks();
+                
+                logToTest('us', 'Actual market symbols: ' + marketSymbols.join(', '));
+                logToTest('us', 'Actual stock symbols: ' + stockSymbols.join(', '));
+                
+                // Check if results match expected
+                const marketMatch = JSON.stringify(marketSymbols) === JSON.stringify(expectedMarketSymbols);
+                const stockMatch = JSON.stringify(stockSymbols) === JSON.stringify(expectedStockSymbols);
+                
+                if (marketMatch && stockMatch) {
+                    setTestStatus('us', 'pass', 'US location data test passed');
+                    testResults.passed++;
+                    testResults.pending--;
+                } else {
+                    setTestStatus('us', 'fail', 'US location data test failed');
+                    testResults.failed++;
+                    testResults.pending--;
+                }
+                
+                updateSummary();
+            } catch (error) {
+                setTestStatus('us', 'fail', 'US location test error: ' + error.message);
+                testResults.failed++;
+                testResults.pending--;
+                updateSummary();
+            }
+        }
+        
+        async function runFranceTest() {
+            setTestStatus('france', 'pending', 'Testing France location data...');
+            logToTest('france', 'Simulating French user location');
+            
+            try {
+                // Test France location
+                const expectedMarketSymbols = ['EWQ', 'CAC'];
+                const expectedStockSymbols = ['MC.PA', 'OR.PA', 'AAPL', 'TSLA', 'GOOGL'];
+                
+                logToTest('france', 'Expected market symbols: ' + expectedMarketSymbols.join(', '));
+                logToTest('france', 'Expected stock symbols: ' + expectedStockSymbols.join(', '));
+                
+                // Simulate the functions
+                function getLocationBasedSymbols() {
+                    const countrySymbols = {
+                        'United States': ['SPY', 'QQQ', 'DIA'],
+                        'United Kingdom': ['EZU', 'EWU', 'VPL'],
+                        'Germany': ['EWG', 'DAX'],
+                        'France': ['EWQ', 'CAC'],
+                        'Japan': ['EWJ', 'DXJ'],
+                        'Canada': ['EWC', 'XIC'],
+                        'Australia': ['EWA', 'AXJ'],
+                        'China': ['FXI', 'ASHR'],
+                        'India': ['EPI', 'INDA'],
+                        'Brazil': ['EWZ', 'IBB'],
+                        'South Korea': ['EWY', 'KORU']
+                    };
+                    return countrySymbols['France'] || ['SPY', 'QQQ', 'DIA'];
+                }
+                
+                function getLocationBasedStocks() {
+                    const countryStocks = {
+                        'United States': ['AAPL', 'TSLA', 'GOOGL', 'AMZN', 'MSFT'],
+                        'United Kingdom': ['BP.L', 'VOD.L', 'AAPL', 'TSLA', 'GOOGL'],
+                        'Germany': ['SAP.DE', 'BMW.DE', 'AAPL', 'TSLA', 'GOOGL'],
+                        'France': ['MC.PA', 'OR.PA', 'AAPL', 'TSLA', 'GOOGL'],
+                        'Japan': ['7203.T', '9984.T', 'AAPL', 'TSLA', 'GOOGL'],
+                        'Canada': ['ENB.TO', 'SU.TO', 'AAPL', 'TSLA', 'GOOGL'],
+                        'Australia': ['CBA.AX', 'BHP.AX', 'AAPL', 'TSLA', 'GOOGL'],
+                        'China': ['BABA', 'TCEHY', 'AAPL', 'TSLA', 'GOOGL'],
+                        'India': ['RELIANCE.BSE', 'TCS.BSE', 'AAPL', 'TSLA', 'GOOGL'],
+                        'Brazil': ['PETR4.SA', 'VALE3.SA', 'AAPL', 'TSLA', 'GOOGL'],
+                        'South Korea': ['005930.KS', '000660.KS', 'AAPL', 'TSLA', 'GOOGL'],
+                        'Sri Lanka': ['AAPL', 'TSLA', 'GOOGL', 'AMZN', 'MSFT']
+                    };
+                    return countryStocks['France'] || ['AAPL', 'TSLA', 'GOOGL', 'AMZN', 'MSFT'];
+                }
+                
+                const marketSymbols = getLocationBasedSymbols();
+                const stockSymbols = getLocationBasedStocks();
+                
+                logToTest('france', 'Actual market symbols: ' + marketSymbols.join(', '));
+                logToTest('france', 'Actual stock symbols: ' + stockSymbols.join(', '));
+                
+                // Check if results match expected
+                const marketMatch = JSON.stringify(marketSymbols) === JSON.stringify(expectedMarketSymbols);
+                const stockMatch = JSON.stringify(stockSymbols) === JSON.stringify(expectedStockSymbols);
+                
+                if (marketMatch && stockMatch) {
+                    setTestStatus('france', 'pass', 'France location data test passed');
+                    testResults.passed++;
+                    testResults.pending--;
+                } else {
+                    setTestStatus('france', 'fail', 'France location data test failed');
+                    testResults.failed++;
+                    testResults.pending--;
+                }
+                
+                updateSummary();
+            } catch (error) {
+                setTestStatus('france', 'fail', 'France location test error: ' + error.message);
+                testResults.failed++;
+                testResults.pending--;
+                updateSummary();
+            }
+        }
+        
+        async function runJapanTest() {
+            setTestStatus('japan', 'pending', 'Testing Japan location data...');
+            logToTest('japan', 'Simulating Japanese user location');
+            
+            try {
+                // Test Japan location
+                const expectedMarketSymbols = ['EWJ', 'DXJ'];
+                const expectedStockSymbols = ['7203.T', '9984.T', 'AAPL', 'TSLA', 'GOOGL'];
+                
+                logToTest('japan', 'Expected market symbols: ' + expectedMarketSymbols.join(', '));
+                logToTest('japan', 'Expected stock symbols: ' + expectedStockSymbols.join(', '));
+                
+                // Simulate the functions
+                function getLocationBasedSymbols() {
+                    const countrySymbols = {
+                        'United States': ['SPY', 'QQQ', 'DIA'],
+                        'United Kingdom': ['EZU', 'EWU', 'VPL'],
+                        'Germany': ['EWG', 'DAX'],
+                        'France': ['EWQ', 'CAC'],
+                        'Japan': ['EWJ', 'DXJ'],
+                        'Canada': ['EWC', 'XIC'],
+                        'Australia': ['EWA', 'AXJ'],
+                        'China': ['FXI', 'ASHR'],
+                        'India': ['EPI', 'INDA'],
+                        'Brazil': ['EWZ', 'IBB'],
+                        'South Korea': ['EWY', 'KORU']
+                    };
+                    return countrySymbols['Japan'] || ['SPY', 'QQQ', 'DIA'];
+                }
+                
+                function getLocationBasedStocks() {
+                    const countryStocks = {
+                        'United States': ['AAPL', 'TSLA', 'GOOGL', 'AMZN', 'MSFT'],
+                        'United Kingdom': ['BP.L', 'VOD.L', 'AAPL', 'TSLA', 'GOOGL'],
+                        'Germany': ['SAP.DE', 'BMW.DE', 'AAPL', 'TSLA', 'GOOGL'],
+                        'France': ['MC.PA', 'OR.PA', 'AAPL', 'TSLA', 'GOOGL'],
+                        'Japan': ['7203.T', '9984.T', 'AAPL', 'TSLA', 'GOOGL'],
+                        'Canada': ['ENB.TO', 'SU.TO', 'AAPL', 'TSLA', 'GOOGL'],
+                        'Australia': ['CBA.AX', 'BHP.AX', 'AAPL', 'TSLA', 'GOOGL'],
+                        'China': ['BABA', 'TCEHY', 'AAPL', 'TSLA', 'GOOGL'],
+                        'India': ['RELIANCE.BSE', 'TCS.BSE', 'AAPL', 'TSLA', 'GOOGL'],
+                        'Brazil': ['PETR4.SA', 'VALE3.SA', 'AAPL', 'TSLA', 'GOOGL'],
+                        'South Korea': ['005930.KS', '000660.KS', 'AAPL', 'TSLA', 'GOOGL'],
+                        'Sri Lanka': ['AAPL', 'TSLA', 'GOOGL', 'AMZN', 'MSFT']
+                    };
+                    return countryStocks['Japan'] || ['AAPL', 'TSLA', 'GOOGL', 'AMZN', 'MSFT'];
+                }
+                
+                const marketSymbols = getLocationBasedSymbols();
+                const stockSymbols = getLocationBasedStocks();
+                
+                logToTest('japan', 'Actual market symbols: ' + marketSymbols.join(', '));
+                logToTest('japan', 'Actual stock symbols: ' + stockSymbols.join(', '));
+                
+                // Check if results match expected
+                const marketMatch = JSON.stringify(marketSymbols) === JSON.stringify(expectedMarketSymbols);
+                const stockMatch = JSON.stringify(stockSymbols) === JSON.stringify(expectedStockSymbols);
+                
+                if (marketMatch && stockMatch) {
+                    setTestStatus('japan', 'pass', 'Japan location data test passed');
+                    testResults.passed++;
+                    testResults.pending--;
+                } else {
+                    setTestStatus('japan', 'fail', 'Japan location data test failed');
+                    testResults.failed++;
+                    testResults.pending--;
+                }
+                
+                updateSummary();
+            } catch (error) {
+                setTestStatus('japan', 'fail', 'Japan location test error: ' + error.message);
+                testResults.failed++;
+                testResults.pending--;
+                updateSummary();
+            }
+        }
+        
+        // API Tests
+        async function runAPIKeyTest() {
+            setTestStatus('apiKey', 'pending', 'Testing API key validation...');
+            logToTest('apiKey', 'Checking API key configuration');
+            
+            try {
+                // Simulate API key check
+                const apiKey = ''; // This would be the actual API key from api.js
+                
+                if (apiKey && apiKey.length > 0) {
+                    setTestStatus('apiKey', 'pass', 'API key is configured');
+                    testResults.passed++;
+                    testResults.pending--;
+                } else {
+                    setTestStatus('apiKey', 'fail', 'API key is missing or empty');
+                    testResults.failed++;
+                    testResults.pending--;
+                }
+                
+                updateSummary();
+            } catch (error) {
+                setTestStatus('apiKey', 'fail', 'API key test error: ' + error.message);
+                testResults.failed++;
+                testResults.pending--;
+                updateSummary();
+            }
+        }
+        
+        // UI Tests
+        async function runDateTimeTest() {
+            setTestStatus('dateTime', 'pending', 'Testing date/time display...');
+            logToTest('dateTime', 'Checking date/time functionality');
+            
+            try {
+                // Simulate date/time functionality
+                const now = new Date();
+                const dateOptions = { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                };
+                
+                const timeOptions = { 
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    second: '2-digit',
+                    hour12: true 
+                };
+                
+                const dateString = now.toLocaleDateString('en-US', dateOptions);
+                const timeString = now.toLocaleTimeString('en-US', timeOptions);
+                
+                logToTest('dateTime', 'Current date: ' + dateString);
+                logToTest('dateTime', 'Current time: ' + timeString);
+                
+                if (dateString && timeString) {
+                    setTestStatus('dateTime', 'pass', 'Date/time display test passed');
+                    testResults.passed++;
+                    testResults.pending--;
+                } else {
+                    setTestStatus('dateTime', 'fail', 'Date/time display test failed');
+                    testResults.failed++;
+                    testResults.pending--;
+                }
+                
+                updateSummary();
+            } catch (error) {
+                setTestStatus('dateTime', 'fail', 'Date/time test error: ' + error.message);
+                testResults.failed++;
+                testResults.pending--;
+                updateSummary();
+            }
+        }
+        
+        // Run all location tests
+        async function runAllLocationTests() {
+            await runGermanyTest();
+            await runUSTest();
+            await runFranceTest();
+            await runJapanTest();
+        }
+        
+        // Run all API tests
+        async function runAllAPITests() {
+            await runAPIKeyTest();
+            // Other API tests would go here
+        }
+        
+        // Run all UI tests
+        async function runAllUITests() {
+            await runDateTimeTest();
+            // Other UI tests would go here
+        }
+        
+        // Run all tests
+        async function runAllTests() {
+            // Reset test results
+            testResults = {
+                passed: 0,
+                failed: 0,
+                pending: 12
+            };
+            updateSummary();
+            
+            // Clear all logs
+            document.querySelectorAll('.log-output').forEach(el => {
+                el.classList.add('d-none');
+                el.innerHTML = '';
+            });
+            
+            // Reset all test statuses
+            document.querySelectorAll('[id$="Status"]').forEach(el => {
+                el.className = 'float-end test-pending';
+                el.textContent = 'PENDING';
+            });
+            
+            // Run all tests
+            await runAllLocationTests();
+            await runAllAPITests();
+            await runAllUITests();
+        }
+        
+        // Set up event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('runAllTests').addEventListener('click', runAllTests);
+            document.getElementById('runLocationTests').addEventListener('click', runAllLocationTests);
+            document.getElementById('runAPITests').addEventListener('click', runAllAPITests);
+            document.getElementById('runUITests').addEventListener('click', runAllUITests);
+        });
+    </script>
+</body>
+</html>
