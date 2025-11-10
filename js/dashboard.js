@@ -174,6 +174,42 @@ function testGermanClient() {
     };
 }
 
+// Get company name for a stock symbol
+function getCompanyName(symbol) {
+    const companyNames = {
+        // US Stocks
+        'AAPL': 'Apple Inc.',
+        'TSLA': 'Tesla Inc.',
+        'GOOGL': 'Alphabet Inc.',
+        'AMZN': 'Amazon.com Inc.',
+        'MSFT': 'Microsoft Corp.',
+        
+        // German Stocks
+        'SAP.DE': 'SAP SE',
+        'BMW.DE': 'Bayerische Motoren Werke',
+        'DTE.DE': 'Deutsche Telekom',
+        'BAS.DE': 'BASF SE',
+        'SIE.DE': 'Siemens AG',
+        
+        // Australian Stocks
+        'CBA.AX': 'Commonwealth Bank',
+        'BHP.AX': 'BHP Group',
+        'WBC.AX': 'Westpac Banking',
+        'CSL.AX': 'CSL Limited',
+        'TLS.AX': 'Telstra',
+        
+        // Other countries
+        'BP.L': 'BP plc',
+        'VOD.L': 'Vodafone Group',
+        'ENB.TO': 'Enbridge Inc.',
+        'SU.TO': 'Suncor Energy',
+        '7203.T': 'Toyota Motor',
+        '9984.T': 'SoftBank Group'
+    };
+    
+    return companyNames[symbol] || symbol;
+}
+
 // Update stock table with mock data when API fails
 function updateStockTableWithMockData() {
     try {
@@ -330,17 +366,39 @@ function updateStockTable(apiResponse) {
         
         console.log('Stock map:', stockMap);
         
-        // Update table rows
+        // Get the symbols we're actually displaying
+        const displaySymbols = Object.keys(stockMap);
+        console.log('Display symbols:', displaySymbols);
+        
+        // Update table rows dynamically
         const tableBody = document.querySelector('.table-dark tbody');
         if (tableBody) {
-            const rows = tableBody.querySelectorAll('tr');
-            let hasData = false; // Track if we have any real data
+            // Clear existing rows
+            tableBody.innerHTML = '';
             
-            rows.forEach(row => {
-                const symbolCell = row.querySelector('td:first-child strong');
-                if (symbolCell) {
-                    const symbol = symbolCell.textContent;
-                    const stockData = stockMap[symbol];
+            // Add rows for each stock we have data for
+            displaySymbols.forEach(symbol => {
+                const stockData = stockMap[symbol];
+                if (stockData) {
+                    // Create row
+                    const row = document.createElement('tr');
+                    
+                    // Determine color based on symbol (simplified approach)
+                    const isPositive = symbol.includes('.DE') || symbol.includes('.AX') || symbol.includes('.L');
+                    const colorClass = isPositive ? 'text-success' : 'text-danger';
+                    
+                    // Add data to row
+                    row.innerHTML = `
+                        <td><strong class="${colorClass}">${symbol}</strong></td>
+                        <td>${getCompanyName(symbol)}</td>
+                        <td>$${stockData.close.toFixed(2)}</td>
+                        <td class="${stockData.close >= stockData.open ? 'text-success' : 'text-danger'}">
+                            ${stockData.close >= stockData.open ? '+' : ''}${(stockData.close - stockData.open).toFixed(2)}
+                        </td>
+                        <td class="${stockData.close >= stockData.open ? 'text-success' : 'text-danger'}">
+                            ${stockData.close >= stockData.open ? '+' : ''}${((stockData.close - stockData.open) / stockData.open * 100).toFixed(1)}%
+                        </td>
+                    `;
                     
                     // Add click event to redirect to stock page
                     row.style.cursor = 'pointer';
@@ -357,53 +415,9 @@ function updateStockTable(apiResponse) {
                         row.style.backgroundColor = '';
                     });
                     
-                    if (stockData) {
-                        console.log(`Updating data for ${symbol}:`, stockData);
-                        hasData = true; // We have real data
-                        
-                        // Update price (use close price)
-                        const priceCell = row.querySelector('td:nth-child(3)');
-                        if (priceCell) {
-                            priceCell.textContent = `$${stockData.close.toFixed(2)}`;
-                            priceCell.classList.remove('text-muted');
-                        }
-                        
-                        // Update change and change percent
-                        const changeCell = row.querySelector('td:nth-child(4)');
-                        const changePercentCell = row.querySelector('td:nth-child(5)');
-                        
-                        if (changeCell && changePercentCell) {
-                            const change = stockData.close - stockData.open;
-                            const changePercent = (change / stockData.open) * 100;
-                            
-                            // Remove existing classes
-                            changeCell.className = '';
-                            changePercentCell.className = '';
-                            
-                            // Add appropriate classes based on positive/negative change
-                            if (change >= 0) {
-                                changeCell.classList.add('text-success');
-                                changePercentCell.classList.add('text-success');
-                                changeCell.textContent = `+${change.toFixed(2)}`;
-                                changePercentCell.textContent = `+${changePercent.toFixed(1)}%`;
-                            } else {
-                                changeCell.classList.add('text-danger');
-                                changePercentCell.classList.add('text-danger');
-                                changeCell.textContent = `${change.toFixed(2)}`;
-                                changePercentCell.textContent = `${changePercent.toFixed(1)}%`;
-                            }
-                        }
-                    } else {
-                        console.log(`No data found for symbol ${symbol}`);
-                    }
+                    tableBody.appendChild(row);
                 }
             });
-            
-            // If we don't have data for any symbols, use mock data
-            if (!hasData) {
-                console.log('No valid stock data received, using mock data');
-                updateStockTableWithMockData();
-            }
         }
     } catch (error) {
         console.error('Error updating stock table:', error);
