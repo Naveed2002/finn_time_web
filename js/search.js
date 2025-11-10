@@ -1,25 +1,25 @@
 // Search functionality for Finn Time
+import { fetchEodData, fetchTickers, fetchExchanges } from './api.js';
+
 document.addEventListener('DOMContentLoaded', function() {
     const searchForm = document.getElementById('search-form');
     const searchInput = document.getElementById('search-input');
     const searchResults = document.getElementById('search-results');
     
-    // Sample stock data for search results
-    const sampleStocks = [
-        { symbol: 'AAPL', name: 'Apple Inc.', country: 'United States', price: 182.52, change: 2.10, changePercent: 1.2 },
-        { symbol: 'TSLA', name: 'Tesla Inc.', country: 'United States', price: 248.50, change: -1.80, changePercent: -0.8 },
-        { symbol: 'GOOGL', name: 'Alphabet Inc.', country: 'United States', price: 139.54, change: 0.72, changePercent: 0.5 },
-        { symbol: 'AMZN', name: 'Amazon.com Inc.', country: 'United States', price: 145.86, change: 1.52, changePercent: 1.1 },
-        { symbol: 'MSFT', name: 'Microsoft Corp.', country: 'United States', price: 342.50, change: 1.25, changePercent: 0.3 },
-        { symbol: 'META', name: 'Meta Platforms Inc.', country: 'United States', price: 325.75, change: -3.20, changePercent: -0.9 },
-        { symbol: 'NFLX', name: 'Netflix Inc.', country: 'United States', price: 420.30, change: 5.40, changePercent: 1.3 },
-        { symbol: 'NVDA', name: 'NVIDIA Corp.', country: 'United States', price: 456.75, change: 11.25, changePercent: 2.4 },
-        { symbol: 'JPM', name: 'JPMorgan Chase & Co.', country: 'United States', price: 165.40, change: -0.80, changePercent: -0.5 },
-        { symbol: 'V', name: 'Visa Inc.', country: 'United States', price: 245.60, change: 2.30, changePercent: 0.9 }
+    // Cache for search results to improve performance
+    let searchCache = {};
+    
+    // Common stock symbols for quick search
+    const commonStocks = [
+        'AAPL', 'TSLA', 'GOOGL', 'AMZN', 'MSFT', 'META', 'NFLX', 'NVDA', 
+        'JPM', 'V', 'MA', 'WMT', 'PG', 'JNJ', 'XOM', 'CVX', 'KO', 'PEP',
+        'SAP.DE', 'BMW.DE', 'DTE.DE', 'BAS.DE', 'SIE.DE',
+        'CBA.AX', 'BHP.AX', 'WBC.AX', 'CSL.AX', 'TLS.AX',
+        'BP.L', 'VOD.L', 'ENB.TO', 'SU.TO', '7203.T', '9984.T'
     ];
     
-    // Sample country data
-    const sampleCountries = [
+    // Country data
+    const countries = [
         { name: 'United States', code: 'US', market: 'NYSE', currency: 'USD' },
         { name: 'United Kingdom', code: 'GB', market: 'LSE', currency: 'GBP' },
         { name: 'Germany', code: 'DE', market: 'FWB', currency: 'EUR' },
@@ -27,49 +27,183 @@ document.addEventListener('DOMContentLoaded', function() {
         { name: 'Canada', code: 'CA', market: 'TSX', currency: 'CAD' },
         { name: 'Australia', code: 'AU', market: 'ASX', currency: 'AUD' },
         { name: 'France', code: 'FR', market: 'Euronext', currency: 'EUR' },
-        { name: 'China', code: 'CN', market: 'SSE', currency: 'CNY' }
+        { name: 'China', code: 'CN', market: 'SSE', currency: 'CNY' },
+        { name: 'India', code: 'IN', market: 'BSE', currency: 'INR' },
+        { name: 'Brazil', code: 'BR', market: 'B3', currency: 'BRL' }
     ];
     
     // Handle search form submission
-    searchForm.addEventListener('submit', function(e) {
+    searchForm.addEventListener('submit', async function(e) {
         e.preventDefault();
-        const searchTerm = searchInput.value.trim().toLowerCase();
+        const searchTerm = searchInput.value.trim();
         const filter = document.getElementById('search-filter').value;
         
         if (searchTerm.length < 1) {
             return;
         }
         
-        performSearch(searchTerm, filter);
+        // Show loading state
+        searchResults.innerHTML = `
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Searching for "${searchTerm}"...</p>
+            </div>
+        `;
+        
+        await performSearch(searchTerm, filter);
     });
     
     // Perform search based on term and filter
-    function performSearch(term, filter) {
-        let results = [];
-        
-        if (filter === 'all' || filter === 'stocks' || filter === 'companies') {
-            // Search stocks
-            const stockResults = sampleStocks.filter(stock => 
-                stock.symbol.toLowerCase().includes(term) || 
-                stock.name.toLowerCase().includes(term)
-            );
-            results = results.concat(stockResults);
+    async function performSearch(term, filter) {
+        try {
+            let results = [];
+            
+            // Check cache first
+            const cacheKey = `${term}-${filter}`;
+            if (searchCache[cacheKey]) {
+                displayResults(searchCache[cacheKey], term);
+                return;
+            }
+            
+            if (filter === 'all' || filter === 'stocks' || filter === 'companies') {
+                // Search stocks using API
+                const stockResults = await searchStocks(term);
+                results = results.concat(stockResults);
+            }
+            
+            if (filter === 'all' || filter === 'countries') {
+                // Search countries
+                const countryResults = countries.filter(country => 
+                    country.name.toLowerCase().includes(term.toLowerCase()) || 
+                    country.code.toLowerCase().includes(term.toLowerCase()) || 
+                    country.market.toLowerCase().includes(term.toLowerCase())
+                );
+                results = results.concat(countryResults.map(country => ({
+                    ...country,
+                    type: 'country'
+                })));
+            }
+            
+            // Cache results
+            searchCache[cacheKey] = results;
+            
+            displayResults(results, term);
+        } catch (error) {
+            console.error('Search error:', error);
+            searchResults.innerHTML = `
+                <div class="text-center py-5">
+                    <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                    <h5>Error occurred during search</h5>
+                    <p class="text-muted">Please try again later</p>
+                </div>
+            `;
         }
-        
-        if (filter === 'all' || filter === 'countries') {
-            // Search countries
-            const countryResults = sampleCountries.filter(country => 
-                country.name.toLowerCase().includes(term) || 
-                country.code.toLowerCase().includes(term) || 
-                country.market.toLowerCase().includes(term)
-            );
-            results = results.concat(countryResults.map(country => ({
-                ...country,
-                type: 'country'
-            })));
+    }
+    
+    // Search stocks using MarketStack API
+    async function searchStocks(term) {
+        try {
+            // First try exact symbol match
+            if (commonStocks.includes(term.toUpperCase())) {
+                const data = await fetchEodData(term.toUpperCase(), 1);
+                if (data && data.data && data.data.length > 0) {
+                    const stock = data.data[0];
+                    return [{
+                        symbol: stock.symbol,
+                        name: getCompanyName(stock.symbol),
+                        price: stock.close,
+                        change: stock.close - stock.open,
+                        changePercent: ((stock.close - stock.open) / stock.open) * 100
+                    }];
+                }
+            }
+            
+            // For broader searches, we'll use common stocks as examples
+            // In a production app, you would use a search endpoint
+            const searchTerm = term.toLowerCase();
+            const matchingStocks = commonStocks.filter(symbol => 
+                symbol.toLowerCase().includes(searchTerm)
+            ).slice(0, 5); // Limit to 5 results
+            
+            if (matchingStocks.length > 0) {
+                // Fetch data for matching stocks
+                const stockData = [];
+                for (const symbol of matchingStocks) {
+                    try {
+                        const data = await fetchEodData(symbol, 1);
+                        if (data && data.data && data.data.length > 0) {
+                            const stock = data.data[0];
+                            stockData.push({
+                                symbol: stock.symbol,
+                                name: getCompanyName(stock.symbol),
+                                price: stock.close,
+                                change: stock.close - stock.open,
+                                changePercent: ((stock.close - stock.open) / stock.open) * 100
+                            });
+                        }
+                    } catch (error) {
+                        console.error(`Error fetching data for ${symbol}:`, error);
+                    }
+                }
+                return stockData;
+            }
+            
+            return [];
+        } catch (error) {
+            console.error('Stock search error:', error);
+            return [];
         }
+    }
+    
+    // Get company name for a stock symbol
+    function getCompanyName(symbol) {
+        const companyNames = {
+            // US Stocks
+            'AAPL': 'Apple Inc.',
+            'TSLA': 'Tesla Inc.',
+            'GOOGL': 'Alphabet Inc.',
+            'AMZN': 'Amazon.com Inc.',
+            'MSFT': 'Microsoft Corp.',
+            'META': 'Meta Platforms Inc.',
+            'NFLX': 'Netflix Inc.',
+            'NVDA': 'NVIDIA Corp.',
+            'JPM': 'JPMorgan Chase & Co.',
+            'V': 'Visa Inc.',
+            'MA': 'Mastercard Inc.',
+            'WMT': 'Walmart Inc.',
+            'PG': 'Procter & Gamble Co.',
+            'JNJ': 'Johnson & Johnson',
+            'XOM': 'Exxon Mobil Corp.',
+            'CVX': 'Chevron Corp.',
+            'KO': 'The Coca-Cola Co.',
+            'PEP': 'PepsiCo Inc.',
+            
+            // German Stocks
+            'SAP.DE': 'SAP SE',
+            'BMW.DE': 'Bayerische Motoren Werke',
+            'DTE.DE': 'Deutsche Telekom',
+            'BAS.DE': 'BASF SE',
+            'SIE.DE': 'Siemens AG',
+            
+            // Australian Stocks
+            'CBA.AX': 'Commonwealth Bank',
+            'BHP.AX': 'BHP Group',
+            'WBC.AX': 'Westpac Banking',
+            'CSL.AX': 'CSL Limited',
+            'TLS.AX': 'Telstra',
+            
+            // Other countries
+            'BP.L': 'BP plc',
+            'VOD.L': 'Vodafone Group',
+            'ENB.TO': 'Enbridge Inc.',
+            'SU.TO': 'Suncor Energy',
+            '7203.T': 'Toyota Motor',
+            '9984.T': 'SoftBank Group'
+        };
         
-        displayResults(results, term);
+        return companyNames[symbol] || symbol;
     }
     
     // Display search results
