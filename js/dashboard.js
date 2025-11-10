@@ -57,8 +57,8 @@ async function fetchRealMarketData() {
 // Get location-based market symbols
 function getLocationBasedSymbols() {
     // Check if we have user location data
-    if (window.userLocation && window.userLocation.country) {
-        const country = window.userLocation.country;
+    if (window.userLocation && (window.userLocation.country || window.userLocation.country_name)) {
+        const country = window.userLocation.country || window.userLocation.country_name;
         
         // Map countries to their major indices/ETFs
         const countrySymbols = {
@@ -94,8 +94,8 @@ function getLocationBasedSymbols() {
 // Get location-based stock symbols
 function getLocationBasedStocks() {
     // Check if we have user location data
-    if (window.userLocation && window.userLocation.country) {
-        const country = window.userLocation.country;
+    if (window.userLocation && (window.userLocation.country || window.userLocation.country_name)) {
+        const country = window.userLocation.country || window.userLocation.country_name;
         
         // Map countries to their major companies - only local/regional stocks
         const countryStocks = {
@@ -155,9 +155,9 @@ function testGermanClient() {
     console.log('- Stock table will show:');
     console.log('  1. SAP.DE (SAP SE)');
     console.log('  2. BMW.DE (Bayerische Motoren Werke)');
-    console.log('  3. AAPL (Apple Inc.)');
-    console.log('  4. TSLA (Tesla Inc.)');
-    console.log('  5. GOOGL (Alphabet Inc.)');
+    console.log('  3. DTE.DE (Deutsche Telekom)');
+    console.log('  4. BAS.DE (BASF SE)');
+    console.log('  5. SIE.DE (Siemens AG)');
     
     // Restore original location (if any)
     // window.userLocation = originalLocation;
