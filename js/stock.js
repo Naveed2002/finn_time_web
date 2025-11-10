@@ -28,7 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
     
     // Try to load all stocks data from shared storage
-    loadAllStocksData();
+    loadAllStocksData().catch(error => {
+        console.error('Error in loadAllStocksData:', error);
+    });
     
     // Load initial data with a delay to avoid rate limiting
     setTimeout(() => {
@@ -36,8 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 1000);
 });
 
-// Load all stocks data from shared storage
-function loadAllStocksData() {
+// Load all stocks data from shared storage or API
+async function loadAllStocksData() {
     try {
         console.log('Loading all stocks data');
         // Check global data first
@@ -67,9 +69,71 @@ function loadAllStocksData() {
             }
         }
         
-        console.log('No shared stock data available');
+        console.log('No shared stock data available, fetching from API');
+        
+        // If no shared data, fetch 3 stocks from API
+        await fetchDefaultStocks();
     } catch (error) {
         console.error('Error loading all stocks data:', error);
+        // Fallback to default stocks
+        await fetchDefaultStocks();
+    }
+}
+
+// Fetch default stocks from API
+async function fetchDefaultStocks() {
+    try {
+        console.log('Fetching default stocks from API');
+        
+        // Default stocks to fetch
+        const defaultStocks = ['AAPL', 'TSLA', 'GOOGL'];
+        
+        // Fetch data for each stock
+        const stockPromises = defaultStocks.map(symbol => 
+            fetchEodData(symbol, 1) // Get latest data for each symbol
+        );
+        
+        // Wait for all requests to complete
+        const responses = await Promise.all(stockPromises);
+        
+        // Process responses
+        const stocksData = [];
+        responses.forEach((response, index) => {
+            if (response && response.data && response.data.length > 0) {
+                stocksData.push(response.data[0]);
+            }
+        });
+        
+        console.log('Fetched stocks data:', stocksData);
+        
+        // Store in global variable
+        allStocksData = stocksData;
+        
+        // Store in localStorage
+        try {
+            const storageData = {
+                data: stocksData,
+                timestamp: Date.now()
+            };
+            localStorage.setItem('finnTimeStockData', JSON.stringify(storageData));
+        } catch (e) {
+            console.error('Failed to store stocks data in localStorage:', e);
+        }
+        
+        // Display the stocks
+        displayAllStocks();
+    } catch (error) {
+        console.error('Error fetching default stocks:', error);
+        
+        // Fallback to mock data
+        const mockData = [
+            { symbol: 'AAPL', open: 178.20, close: 182.52, high: 183.20, low: 180.12, volume: 45230120 },
+            { symbol: 'TSLA', open: 250.50, close: 248.50, high: 252.30, low: 247.80, volume: 32450120 },
+            { symbol: 'GOOGL', open: 138.85, close: 139.54, high: 140.20, low: 138.50, volume: 28760120 }
+        ];
+        
+        allStocksData = mockData;
+        displayAllStocks();
     }
 }
 
