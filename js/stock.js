@@ -80,13 +80,48 @@ async function loadAllStocksData() {
     }
 }
 
+// Get location-based stock symbols
+function getLocationBasedStocks() {
+    // Check if we have user location data
+    if (window.userLocation && (window.userLocation.country || window.userLocation.country_name)) {
+        const country = window.userLocation.country || window.userLocation.country_name;
+        
+        // Map countries to their major companies - only local/regional stocks
+        const countryStocks = {
+            'United States': ['AAPL', 'TSLA', 'GOOGL', 'AMZN', 'MSFT'],
+            'United Kingdom': ['BP.L', 'VOD.L', 'RIO.L', 'AZN.L', 'HSBA.L'],
+            'Germany': ['SAP.DE', 'BMW.DE', 'DTE.DE', 'BAS.DE', 'SIE.DE'],
+            'France': ['MC.PA', 'OR.PA', 'SAN.PA', 'AIR.PA', 'BNP.PA'],
+            'Japan': ['7203.T', '9984.T', '8306.T', '8035.T', '6758.T'],
+            'Canada': ['ENB.TO', 'SU.TO', 'TD.TO', 'BCE.TO', 'RY.TO'],
+            'Australia': ['CBA.AX', 'BHP.AX', 'WBC.AX', 'CSL.AX', 'TLS.AX'],
+            'China': ['BABA', 'TCEHY', 'JD', 'BIDU', 'NTES'],
+            'India': ['RELIANCE.BSE', 'TCS.BSE', 'HDFC.BSE', 'INFY.BSE', 'ICICI.BSE'],
+            'Brazil': ['PETR4.SA', 'VALE3.SA', 'ITUB4.SA', 'BBDC4.SA', 'ABEV3.SA'],
+            'South Korea': ['005930.KS', '000660.KS', '035420.KS', '035720.KS', '005380.KS'],
+            'Sri Lanka': ['AAPL', 'TSLA', 'GOOGL', 'AMZN', 'MSFT'] // Using US stocks for Sri Lanka as well
+        };
+        
+        // Return location-specific stocks or default to US
+        return countryStocks[country] || ['AAPL', 'TSLA', 'GOOGL', 'AMZN', 'MSFT'];
+    }
+    
+    // Default to US stocks if no location data
+    return ['AAPL', 'TSLA', 'GOOGL', 'AMZN', 'MSFT'];
+}
+
 // Fetch default stocks from API
 async function fetchDefaultStocks() {
     try {
         console.log('Fetching default stocks from API');
         
-        // Default stocks to fetch
-        const defaultStocks = ['AAPL', 'TSLA', 'GOOGL'];
+        // Get location-based stocks
+        const locationStocks = getLocationBasedStocks();
+        
+        // Limit to 3 stocks for the all stocks section
+        const defaultStocks = locationStocks.slice(0, 3);
+        
+        console.log('Fetching location-based stocks:', defaultStocks);
         
         // Fetch data for each stock
         const stockPromises = defaultStocks.map(symbol => 
@@ -125,11 +160,12 @@ async function fetchDefaultStocks() {
     } catch (error) {
         console.error('Error fetching default stocks:', error);
         
-        // Fallback to mock data
+        // Fallback to mock data with location-based stocks
+        const locationStocks = getLocationBasedStocks().slice(0, 3);
         const mockData = [
-            { symbol: 'AAPL', open: 178.20, close: 182.52, high: 183.20, low: 180.12, volume: 45230120 },
-            { symbol: 'TSLA', open: 250.50, close: 248.50, high: 252.30, low: 247.80, volume: 32450120 },
-            { symbol: 'GOOGL', open: 138.85, close: 139.54, high: 140.20, low: 138.50, volume: 28760120 }
+            { symbol: locationStocks[0] || 'AAPL', open: 178.20, close: 182.52, high: 183.20, low: 180.12, volume: 45230120 },
+            { symbol: locationStocks[1] || 'TSLA', open: 250.50, close: 248.50, high: 252.30, low: 247.80, volume: 32450120 },
+            { symbol: locationStocks[2] || 'GOOGL', open: 138.85, close: 139.54, high: 140.20, low: 138.50, volume: 28760120 }
         ];
         
         allStocksData = mockData;
