@@ -280,6 +280,19 @@ async function fetchStockData() {
                     return;
                 }
                 
+                // Store data globally for other pages to access
+                window.finnTimeStockData = response.data;
+                        
+                // Also store in localStorage for persistence
+                try {
+                    localStorage.setItem('finnTimeStockData', JSON.stringify({
+                        data: response.data,
+                        timestamp: Date.now()
+                    }));
+                } catch (e) {
+                    console.error('Failed to store stock data in localStorage:', e);
+                }
+                        
                 // Process and update the stock table
                 updateStockTable(response);
                 return;

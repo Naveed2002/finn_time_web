@@ -5,6 +5,7 @@ import { fetchEodData, fetchIntradayData } from './api.js';
 let stockChart;
 let currentSymbol = 'AAPL';
 let currentTimeRange = '1M';
+let allStocksData = [];
 
 // Initialize the page when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
@@ -26,11 +27,147 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set up event listeners
     setupEventListeners();
     
+    // Try to load all stocks data from shared storage
+    loadAllStocksData();
+    
     // Load initial data with a delay to avoid rate limiting
     setTimeout(() => {
         loadStockData(window.currentStockSymbol, currentTimeRange);
     }, 1000);
 });
+
+// Load all stocks data from shared storage
+function loadAllStocksData() {
+    try {
+        // Check global data first
+        if (window.finnTimeStockData && window.finnTimeStockData.length > 0) {
+            allStocksData = window.finnTimeStockData;
+            displayAllStocks();
+            return;
+        }
+        
+        // Check localStorage
+        const storedData = localStorage.getItem('finnTimeStockData');
+        if (storedData) {
+            const parsed = JSON.parse(storedData);
+            // Check if data is recent (less than 1 hour old)
+            if (Date.now() - parsed.timestamp < 3600000) {
+                allStocksData = parsed.data;
+                displayAllStocks();
+                return;
+            }
+        }
+        
+        console.log('No shared stock data available');
+    } catch (error) {
+        console.error('Error loading all stocks data:', error);
+    }
+}
+
+// Display all stocks in a table
+function displayAllStocks() {
+    try {
+        const allStocksContainer = document.getElementById('all-stocks-container');
+        if (!allStocksContainer) return;
+        
+        if (allStocksData.length === 0) {
+            allStocksContainer.innerHTML = '<p class="text-muted">No stock data available</p>';
+            return;
+        }
+        
+        let html = `
+            <h5 class="mb-3"><i class="fas fa-list me-2"></i>All Available Stocks</h5>
+            <div class="table-responsive">
+                <table class="table table-dark table-hover">
+                    <thead>
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Change</th>
+                            <th>Change %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        allStocksData.forEach(stock => {
+            const change = stock.close - stock.open;
+            const changePercent = (change / stock.open) * 100;
+            const isPositive = change >= 0;
+            const changeClass = isPositive ? 'text-success' : 'text-danger';
+            
+            html += `
+                <tr style="cursor: pointer;" onclick="window.location.href='stock.html?symbol=${stock.symbol}'">
+                    <td><strong class="${changeClass}">${stock.symbol}</strong></td>
+                    <td>${getCompanyName(stock.symbol)}</td>
+                    <td>$${stock.close.toFixed(2)}</td>
+                    <td class="${changeClass}">${isPositive ? '+' : ''}${change.toFixed(2)}</td>
+                    <td class="${changeClass}">${isPositive ? '+' : ''}${changePercent.toFixed(2)}%</td>
+                </tr>
+            `;
+        });
+        
+        html += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+        
+        allStocksContainer.innerHTML = html;
+    } catch (error) {
+        console.error('Error displaying all stocks:', error);
+    }
+}
+
+// Get company name for a stock symbol
+function getCompanyName(symbol) {
+    const companyNames = {
+        // US Stocks
+        'AAPL': 'Apple Inc.',
+        'TSLA': 'Tesla Inc.',
+        'GOOGL': 'Alphabet Inc.',
+        'AMZN': 'Amazon.com Inc.',
+        'MSFT': 'Microsoft Corp.',
+        'META': 'Meta Platforms Inc.',
+        'NFLX': 'Netflix Inc.',
+        'NVDA': 'NVIDIA Corp.',
+        'JPM': 'JPMorgan Chase & Co.',
+        'V': 'Visa Inc.',
+        'MA': 'Mastercard Inc.',
+        'WMT': 'Walmart Inc.',
+        'PG': 'Procter & Gamble Co.',
+        'JNJ': 'Johnson & Johnson',
+        'XOM': 'Exxon Mobil Corp.',
+        'CVX': 'Chevron Corp.',
+        'KO': 'The Coca-Cola Co.',
+        'PEP': 'PepsiCo Inc.',
+        
+        // German Stocks
+        'SAP.DE': 'SAP SE',
+        'BMW.DE': 'Bayerische Motoren Werke',
+        'DTE.DE': 'Deutsche Telekom',
+        'BAS.DE': 'BASF SE',
+        'SIE.DE': 'Siemens AG',
+        
+        // Australian Stocks
+        'CBA.AX': 'Commonwealth Bank',
+        'BHP.AX': 'BHP Group',
+        'WBC.AX': 'Westpac Banking',
+        'CSL.AX': 'CSL Limited',
+        'TLS.AX': 'Telstra',
+        
+        // Other countries
+        'BP.L': 'BP plc',
+        'VOD.L': 'Vodafone Group',
+        'ENB.TO': 'Enbridge Inc.',
+        'SU.TO': 'Suncor Energy',
+        '7203.T': 'Toyota Motor',
+        '9984.T': 'SoftBank Group'
+    };
+    
+    return companyNames[symbol] || symbol;
+}
 
 // Set up event listeners
 function setupEventListeners() {
@@ -250,11 +387,51 @@ function initChart() {
     });
 }
 
-// Load stock data from MarketStack API
+// Load stock data from shared data or MarketStack API
 async function loadStockData(symbol, timeRange) {
     try {
         // Show loading state
-        console.log(`Loading ${symbol} data for ${timeRange} range from MarketStack`);
+        console.log(`Loading ${symbol} data for ${timeRange} range`);
+        
+        // First, try to get data from the shared global data
+        let stockData = null;
+        
+        // Check global data first
+        if (window.finnTimeStockData) {
+            stockData = window.finnTimeStockData.find(item => item.symbol === symbol);
+        }
+        
+        // If not found in global data, check localStorage
+        if (!stockData) {
+            try {
+                const storedData = localStorage.getItem('finnTimeStockData');
+                if (storedData) {
+                    const parsed = JSON.parse(storedData);
+                    // Check if data is recent (less than 1 hour old)
+                    if (Date.now() - parsed.timestamp < 3600000) {
+                        stockData = parsed.data.find(item => item.symbol === symbol);
+                    }
+                }
+            } catch (e) {
+                console.error('Error reading from localStorage:', e);
+            }
+        }
+        
+        // If we found the stock data in shared storage, use it
+        if (stockData) {
+            console.log(`Using shared data for ${symbol}`);
+            // Create a response object similar to what the API would return
+            const response = {
+                data: [stockData]
+            };
+            
+            // Process and display the data
+            processStockData(response, timeRange, symbol);
+            return;
+        }
+        
+        // If no shared data, fall back to API call
+        console.log(`No shared data found for ${symbol}, fetching from MarketStack`);
         
         let response;
         
