@@ -281,14 +281,19 @@ async function fetchStockData() {
                 }
                 
                 // Store data globally for other pages to access
+                console.log('Storing stock data globally:', response.data);
                 window.finnTimeStockData = response.data;
+                console.log('Global data stored:', window.finnTimeStockData);
                         
                 // Also store in localStorage for persistence
                 try {
-                    localStorage.setItem('finnTimeStockData', JSON.stringify({
+                    const storageData = {
                         data: response.data,
                         timestamp: Date.now()
-                    }));
+                    };
+                    console.log('Storing stock data in localStorage:', storageData);
+                    localStorage.setItem('finnTimeStockData', JSON.stringify(storageData));
+                    console.log('Data stored in localStorage');
                 } catch (e) {
                     console.error('Failed to store stock data in localStorage:', e);
                 }
