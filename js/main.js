@@ -25,31 +25,35 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function ipLookUp () {
-  $.ajax('https://ip-api.com/json')
-  .then(
-      function success(response) {
+  $.ajax({
+      url: 'https://ipapi.co/json/',
+      method: 'GET',
+      success: function(response) {
           console.log('User\'s Location Data is ', response);
-          console.log('User\'s Country', response.country);
+          console.log('User\'s Country', response.country_name);
           
           // Get country flag emoji (simple approach using country code)
-          const countryCode = getCountryCode(response.country);
+          const countryCode = response.country_code || 'GLOBAL';
           const flagEmoji = getFlagEmoji(countryCode);
           
           // Update location info with animation - only show country with flag in round container
           locationInfo.innerHTML = `
-              <span class="flag-container">${flagEmoji}</span>${response.country}
+              <span class="flag-container">${flagEmoji}</span>${response.country_name || 'Global Markets'}
           `;
           locationInfo.className = 'mb-4 fade-in text-success';
           
           // Store location data for use in other parts of the app
-          window.userLocation = response;
+          window.userLocation = {
+              country: response.country_name,
+              city: response.city,
+              countryCode: response.country_code
+          };
           
           // Update market trend title with location
-          updateMarketTrendTitle(response.country);
+          updateMarketTrendTitle(response.country_name || 'Global Markets');
       },
-
-      function fail(data, status) {
-          console.log('Request failed.  Returned status of', status);
+      error: function(xhr, status, error) {
+          console.log('Request failed. Returned status of', status);
           locationInfo.innerHTML = `
               <span class="flag-container">🌍</span>Global Markets
           `;
@@ -58,7 +62,7 @@ function ipLookUp () {
           // Update market trend title for global markets
           updateMarketTrendTitle('Global Markets');
       }
-  );
+  });
 }
 
 // Get country code from country name

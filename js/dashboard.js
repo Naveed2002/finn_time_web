@@ -200,22 +200,97 @@ async function fetchStockData() {
         
         // Get location-based stock symbols
         const symbols = getLocationBasedStocks();
+        console.log('Requesting stock data for symbols:', symbols);
         
-        // Fetch all data in a single request - this is the only API call we'll make
-        const response = await fetchEodData(symbols, 1); // Get latest data for all symbols
-        console.log('Stock data response:', response);
+        // Try batch request first
+        try {
+            const response = await fetchEodData(symbols, 1); // Get latest data for all symbols
+            console.log('Stock data response:', response);
+            
+            // Check if we have data for all requested symbols
+            if (response && response.data && response.data.length > 0) {
+                const receivedSymbols = response.data.map(item => item.symbol);
+                console.log('Received data for symbols:', receivedSymbols);
+                
+                // If we didn't get data for all symbols, try individual requests
+                if (receivedSymbols.length < symbols.length) {
+                    console.log('Did not receive data for all symbols, trying individual requests');
+                    const individualResponses = [];
+                    
+                    for (const symbol of symbols) {
+                        if (!receivedSymbols.includes(symbol)) {
+                            try {
+                                console.log(`Requesting individual data for symbol: ${symbol}`);
+                                const individualResponse = await fetchEodData(symbol, 1);
+                                if (individualResponse && individualResponse.data && individualResponse.data.length > 0) {
+                                    individualResponses.push(...individualResponse.data);
+                                }
+                            } catch (individualError) {
+                                console.error(`Error fetching individual data for ${symbol}:`, individualError);
+                            }
+                        }
+                    }
+                    
+                    // Combine batch and individual responses
+                    const combinedData = [...response.data, ...individualResponses];
+                    const combinedResponse = { data: combinedData };
+                    console.log('Combined response:', combinedResponse);
+                    updateStockTable(combinedResponse);
+                    return;
+                }
+                
+                // Process and update the stock table
+                updateStockTable(response);
+                return;
+            }
+        } catch (batchError) {
+            console.error('Batch request failed:', batchError);
+        }
         
-        // Check if we have data
-        if (response && response.data && response.data.length > 0) {
-            // Process and update the stock table
-            updateStockTable(response);
+        // If batch request failed or didn't return data, try individual requests
+        console.log('Trying individual requests for each symbol');
+        const individualResponses = [];
+        
+        for (const symbol of symbols) {
+            try {
+                console.log(`Requesting individual data for symbol: ${symbol}`);
+                const individualResponse = await fetchEodData(symbol, 1);
+                if (individualResponse && individualResponse.data && individualResponse.data.length > 0) {
+                    individualResponses.push(...individualResponse.data);
+                }
+            } catch (individualError) {
+                console.error(`Error fetching individual data for ${symbol}:`, individualError);
+            }
+        }
+        
+        if (individualResponses.length > 0) {
+            const combinedResponse = { data: individualResponses };
+            console.log('Individual requests response:', combinedResponse);
+            updateStockTable(combinedResponse);
         } else {
-            // If no data, try with default US stocks
+            // If still no data, try with default US stocks
             console.log('No location-specific data received, trying with default US stocks');
             const defaultSymbols = ['AAPL', 'TSLA', 'GOOGL', 'AMZN', 'MSFT'];
-            const defaultResponse = await fetchEodData(defaultSymbols, 1);
-            if (defaultResponse && defaultResponse.data && defaultResponse.data.length > 0) {
-                updateStockTable(defaultResponse);
+            console.log('Requesting fallback stock data for symbols:', defaultSymbols);
+            
+            // Try individual requests for default symbols
+            const defaultResponses = [];
+            for (const symbol of defaultSymbols) {
+                try {
+                    console.log(`Requesting individual data for default symbol: ${symbol}`);
+                    const individualResponse = await fetchEodData(symbol, 1);
+                    if (individualResponse && individualResponse.data && individualResponse.data.length > 0) {
+                        defaultResponses.push(...individualResponse.data);
+                    }
+                } catch (individualError) {
+                    console.error(`Error fetching individual data for default ${symbol}:`, individualError);
+                }
+            }
+            
+            if (defaultResponses.length > 0) {
+                const combinedResponse = { data: defaultResponses };
+                console.log('Default symbols response:', combinedResponse);
+                updateStockTable(combinedResponse);
             } else {
                 // If still no data, use mock data
                 console.log('No data received from API, using mock data');
@@ -225,23 +300,8 @@ async function fetchStockData() {
         
     } catch (error) {
         console.error('Error fetching stock data:', error);
-        try {
-            // Try with default US stocks as fallback
-            console.log('Trying with default US stocks as fallback');
-            const defaultSymbols = ['AAPL', 'TSLA', 'GOOGL', 'AMZN', 'MSFT'];
-            const defaultResponse = await fetchEodData(defaultSymbols, 1);
-            if (defaultResponse && defaultResponse.data && defaultResponse.data.length > 0) {
-                updateStockTable(defaultResponse);
-            } else {
-                // If still no data, use mock data
-                console.log('No data received from fallback API request, using mock data');
-                updateStockTableWithMockData();
-            }
-        } catch (fallbackError) {
-            console.error('Error with fallback request:', fallbackError);
-            // Even if API fails, we still want to show the table with mock data
-            updateStockTableWithMockData();
-        }
+        // Even if API fails, we still want to show the table with mock data
+        updateStockTableWithMockData();
     }
 }
 
