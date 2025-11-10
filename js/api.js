@@ -1,6 +1,6 @@
 // API Utility for Finn Time - Centralized MarketStack API handling
-//c5bf59d21f1b87564b98cbe0cbef6c45
-const API_KEY = '62737b973d9d906db54728d08d7eb514'; // MarketStack API key
+//350d6302cf108ca14e4c0654f523e040
+const API_KEY = '350d6302cf108ca14e4c0654f523e040'; // MarketStack API key
 const BASE_URL = 'https://api.marketstack.com/v1'; // website (marketstack)
 
 // Rate limiting constants
