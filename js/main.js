@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function ipLookUp () {
+  // Try ipapi.co first
   $.ajax({
       url: 'https://ipapi.co/json/',
       method: 'GET',
@@ -37,10 +38,12 @@ function ipLookUp () {
           const flagEmoji = getFlagEmoji(countryCode);
           
           // Update location info with animation - only show country with flag in round container
-          locationInfo.innerHTML = `
-              <span class="flag-container">${flagEmoji}</span>${response.country_name || 'Global Markets'}
-          `;
-          locationInfo.className = 'mb-4 fade-in text-success';
+          if (locationInfo) {
+              locationInfo.innerHTML = `
+                  <span class="flag-container">${flagEmoji}</span>${response.country_name || 'Global Markets'}
+              `;
+              locationInfo.className = 'mb-4 fade-in text-success';
+          }
           
           // Store location data for use in other parts of the app
           window.userLocation = {
@@ -53,14 +56,59 @@ function ipLookUp () {
           updateMarketTrendTitle(response.country_name || 'Global Markets');
       },
       error: function(xhr, status, error) {
-          console.log('Request failed. Returned status of', status);
-          locationInfo.innerHTML = `
-              <span class="flag-container">🌍</span>Global Markets
-          `;
-          locationInfo.className = 'mb-4 fade-in text-warning';
+          console.log('ipapi.co request failed. Returned status of', status);
           
-          // Update market trend title for global markets
-          updateMarketTrendTitle('Global Markets');
+          // Fallback to ip-api.com
+          $.ajax({
+              url: 'http://ip-api.com/json/',
+              method: 'GET',
+              success: function(response) {
+                  console.log('Fallback Location Data is ', response);
+                  console.log('Fallback Country', response.country);
+                  
+                  // Get country flag emoji (simple approach using country code)
+                  const countryCode = response.countryCode || 'GLOBAL';
+                  const flagEmoji = getFlagEmoji(countryCode);
+                  
+                  // Update location info with animation
+                  if (locationInfo) {
+                      locationInfo.innerHTML = `
+                          <span class="flag-container">${flagEmoji}</span>${response.country || 'Global Markets'}
+                      `;
+                      locationInfo.className = 'mb-4 fade-in text-success';
+                  }
+                  
+                  // Store location data for use in other parts of the app
+                  window.userLocation = {
+                      country: response.country,
+                      city: response.city,
+                      countryCode: response.countryCode
+                  };
+                  
+                  // Update market trend title with location
+                  updateMarketTrendTitle(response.country || 'Global Markets');
+              },
+              error: function(fallbackXhr, fallbackStatus, fallbackError) {
+                  console.log('Both IP geolocation services failed. Using default location.');
+                  
+                  // Set default location data
+                  window.userLocation = {
+                      country: 'United States',
+                      city: 'New York',
+                      countryCode: 'US'
+                  };
+                  
+                  if (locationInfo) {
+                      locationInfo.innerHTML = `
+                          <span class="flag-container">🇺🇸</span>United States
+                      `;
+                      locationInfo.className = 'mb-4 fade-in text-success';
+                  }
+                  
+                  // Update market trend title for global markets
+                  updateMarketTrendTitle('United States');
+              }
+          });
       }
   });
 }
