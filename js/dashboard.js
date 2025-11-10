@@ -97,20 +97,19 @@ function getLocationBasedStocks() {
     if (window.userLocation && window.userLocation.country) {
         const country = window.userLocation.country;
         
-        // Map countries to their major companies
-        // Using mostly US stocks for API compatibility, with some regional variations
+        // Map countries to their major companies - only local/regional stocks
         const countryStocks = {
             'United States': ['AAPL', 'TSLA', 'GOOGL', 'AMZN', 'MSFT'],
-            'United Kingdom': ['BP.L', 'VOD.L', 'AAPL', 'TSLA', 'GOOGL'],
-            'Germany': ['SAP.DE', 'BMW.DE', 'AAPL', 'TSLA', 'GOOGL'],
-            'France': ['MC.PA', 'OR.PA', 'AAPL', 'TSLA', 'GOOGL'],
-            'Japan': ['7203.T', '9984.T', 'AAPL', 'TSLA', 'GOOGL'],
-            'Canada': ['ENB.TO', 'SU.TO', 'AAPL', 'TSLA', 'GOOGL'],
-            'Australia': ['CBA.AX', 'BHP.AX', 'AAPL', 'TSLA', 'GOOGL'],
-            'China': ['BABA', 'TCEHY', 'AAPL', 'TSLA', 'GOOGL'],
-            'India': ['RELIANCE.BSE', 'TCS.BSE', 'AAPL', 'TSLA', 'GOOGL'],
-            'Brazil': ['PETR4.SA', 'VALE3.SA', 'AAPL', 'TSLA', 'GOOGL'],
-            'South Korea': ['005930.KS', '000660.KS', 'AAPL', 'TSLA', 'GOOGL'],
+            'United Kingdom': ['BP.L', 'VOD.L', 'RIO.L', 'AZN.L', 'HSBA.L'],
+            'Germany': ['SAP.DE', 'BMW.DE', 'DTE.DE', 'BAS.DE', 'SIE.DE'],
+            'France': ['MC.PA', 'OR.PA', 'SAN.PA', 'AIR.PA', 'BNP.PA'],
+            'Japan': ['7203.T', '9984.T', '8306.T', '8035.T', '6758.T'],
+            'Canada': ['ENB.TO', 'SU.TO', 'TD.TO', 'BCE.TO', 'RY.TO'],
+            'Australia': ['CBA.AX', 'BHP.AX', 'WBC.AX', 'CSL.AX', 'TLS.AX'],
+            'China': ['BABA', 'TCEHY', 'JD', 'BIDU', 'NTES'],
+            'India': ['RELIANCE.BSE', 'TCS.BSE', 'HDFC.BSE', 'INFY.BSE', 'ICICI.BSE'],
+            'Brazil': ['PETR4.SA', 'VALE3.SA', 'ITUB4.SA', 'BBDC4.SA', 'ABEV3.SA'],
+            'South Korea': ['005930.KS', '000660.KS', '035420.KS', '035720.KS', '005380.KS'],
             'Sri Lanka': ['AAPL', 'TSLA', 'GOOGL', 'AMZN', 'MSFT'] // Using US stocks for Sri Lanka as well
         };
         
