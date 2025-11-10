@@ -199,6 +199,24 @@ function setupEventListeners() {
         // In a real app, this would convert the values
         console.log(`Currency changed to: ${selectedCurrency}`);
     });
+    
+    // Pagination buttons
+    const prevButton = document.getElementById('prev-page');
+    const nextButton = document.getElementById('next-page');
+    
+    if (prevButton) {
+        prevButton.addEventListener('click', () => {
+            // In a real implementation, this would load previous page of data
+            console.log('Previous page clicked');
+        });
+    }
+    
+    if (nextButton) {
+        nextButton.addEventListener('click', () => {
+            // In a real implementation, this would load next page of data
+            console.log('Next page clicked');
+        });
+    }
 }
 
 // Update company information based on symbol
@@ -213,6 +231,13 @@ async function updateCompanyInfo(symbol) {
             'AAPL': {
                 name: 'Apple Inc.',
                 sector: 'Technology',
+                industry: 'Consumer Electronics',
+                description: 'Leading technology company designing innovative consumer electronics, computer software, and online services.',
+                headquarters: 'Cupertino, California, USA',
+                ceo: 'Tim Cook',
+                founded: 'April 1, 1976',
+                employees: '164,000',
+                website: 'www.apple.com',
                 price: '$182.52',
                 change: '+1.2%',
                 changeClass: 'text-success',
@@ -221,6 +246,13 @@ async function updateCompanyInfo(symbol) {
             'TSLA': {
                 name: 'Tesla Inc.',
                 sector: 'Automotive',
+                industry: 'Auto Manufacturers',
+                description: 'Electric vehicle and clean energy company designing, manufacturing, and selling electric cars, battery energy storage systems, and solar panels.',
+                headquarters: 'Austin, Texas, USA',
+                ceo: 'Elon Musk',
+                founded: 'July 1, 2003',
+                employees: '127,855',
+                website: 'www.tesla.com',
                 price: '$248.50',
                 change: '-0.8%',
                 changeClass: 'text-danger',
@@ -229,6 +261,13 @@ async function updateCompanyInfo(symbol) {
             'GOOGL': {
                 name: 'Alphabet Inc.',
                 sector: 'Technology',
+                industry: 'Internet Content & Information',
+                description: 'Holding company for Google and other subsidiaries, focusing on internet-based services and products.',
+                headquarters: 'Mountain View, California, USA',
+                ceo: 'Sundar Pichai',
+                founded: 'October 2, 2015',
+                employees: '182,502',
+                website: 'www.abc.xyz',
                 price: '$139.54',
                 change: '+0.5%',
                 changeClass: 'text-success',
@@ -236,7 +275,14 @@ async function updateCompanyInfo(symbol) {
             },
             'AMZN': {
                 name: 'Amazon.com Inc.',
-                sector: 'E-commerce',
+                sector: 'Consumer Cyclical',
+                industry: 'Internet Retail',
+                description: 'Multinational technology company focusing on e-commerce, cloud computing, digital streaming, and artificial intelligence.',
+                headquarters: 'Seattle, Washington, USA',
+                ceo: 'Andy Jassy',
+                founded: 'July 5, 1994',
+                employees: '1,525,000',
+                website: 'www.amazon.com',
                 price: '$145.86',
                 change: '+1.1%',
                 changeClass: 'text-success',
@@ -245,6 +291,13 @@ async function updateCompanyInfo(symbol) {
             'MSFT': {
                 name: 'Microsoft Corp.',
                 sector: 'Technology',
+                industry: 'Software - Infrastructure',
+                description: 'Technology company developing, licensing, and supporting software, services, devices, and solutions.',
+                headquarters: 'Redmond, Washington, USA',
+                ceo: 'Satya Nadella',
+                founded: 'April 4, 1975',
+                employees: '221,000',
+                website: 'www.microsoft.com',
                 price: '$342.50',
                 change: '+0.3%',
                 changeClass: 'text-success',
@@ -258,6 +311,13 @@ async function updateCompanyInfo(symbol) {
             data = {
                 name: `${symbol} Corporation`,
                 sector: 'Technology',
+                industry: 'Technology',
+                description: 'Company information not available.',
+                headquarters: 'Unknown',
+                ceo: 'Unknown',
+                founded: 'Unknown',
+                employees: 'Unknown',
+                website: 'www.example.com',
                 price: '--',
                 change: '--',
                 changeClass: 'text-muted',
@@ -265,8 +325,16 @@ async function updateCompanyInfo(symbol) {
             };
         }
         
+        // Update company information
         document.getElementById('company-name').textContent = `${data.name} (${symbol})`;
         document.getElementById('company-sector').textContent = `${data.sector} Sector`;
+        document.getElementById('company-description').textContent = data.description;
+        document.getElementById('company-industry').textContent = data.industry;
+        document.getElementById('company-headquarters').textContent = data.headquarters;
+        document.getElementById('company-ceo').textContent = data.ceo;
+        document.getElementById('company-founded').textContent = data.founded;
+        document.getElementById('company-employees').textContent = data.employees;
+        document.getElementById('company-website').innerHTML = `<a href="#" class="text-success">${data.website}</a>`;
         document.getElementById('current-price').textContent = data.price;
         document.getElementById('current-price').className = data.changeClass;
         
@@ -566,6 +634,9 @@ function processStockData(apiResponse, timeRange, symbol) {
             
             // Update key statistics
             updateKeyStatistics(latest);
+            
+            // Update historical prices table
+            updateHistoricalPrices(stockData);
         }
     } catch (error) {
         console.error('Error processing stock data:', error);
@@ -573,13 +644,87 @@ function processStockData(apiResponse, timeRange, symbol) {
     }
 }
 
+// Update historical prices table
+function updateHistoricalPrices(stockData) {
+    try {
+        const tableBody = document.getElementById('historical-prices-body');
+        if (!tableBody) return;
+        
+        if (stockData.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No historical data available</td></tr>';
+            return;
+        }
+        
+        // Show only the most recent 10 days
+        const recentData = stockData.slice(-10).reverse();
+        
+        let html = '';
+        recentData.forEach(item => {
+            const date = new Date(item.date);
+            const formattedDate = `${date.getMonth()+1}/${date.getDate()}/${date.getFullYear()}`;
+            
+            const change = item.close - item.open;
+            const changePercent = (change / item.open) * 100;
+            const isPositive = change >= 0;
+            const changeClass = isPositive ? 'text-success' : 'text-danger';
+            
+            html += `
+                <tr>
+                    <td>${formattedDate}</td>
+                    <td>$${item.open.toFixed(2)}</td>
+                    <td>$${item.high.toFixed(2)}</td>
+                    <td>$${item.low.toFixed(2)}</td>
+                    <td>$${item.close.toFixed(2)}</td>
+                    <td>${Math.round(item.volume).toLocaleString()}</td>
+                    <td class="${changeClass}">${isPositive ? '+' : ''}${changePercent.toFixed(2)}%</td>
+                </tr>
+            `;
+        });
+        
+        tableBody.innerHTML = html;
+        
+        // Update pagination info
+        document.getElementById('current-page').textContent = '1';
+        document.getElementById('total-pages').textContent = Math.ceil(stockData.length / 10);
+    } catch (error) {
+        console.error('Error updating historical prices:', error);
+    }
+}
+
 // Update key statistics with real data
 function updateKeyStatistics(latestData) {
     if (latestData) {
+        // Price Information
         document.getElementById('stat-open').textContent = `$${latestData.open.toFixed(2)}`;
         document.getElementById('stat-prev-close').textContent = `$${latestData.close.toFixed(2)}`; // Using close as previous close
         document.getElementById('stat-range').textContent = `$${latestData.low.toFixed(2)} - $${latestData.high.toFixed(2)}`;
+        document.getElementById('stat-52w-high').textContent = `$${(latestData.high * 1.1).toFixed(2)}`; // Mock 52 week high
+        document.getElementById('stat-52w-low').textContent = `$${(latestData.low * 0.9).toFixed(2)}`; // Mock 52 week low
+        document.getElementById('stat-52w-range').textContent = `$${(latestData.low * 0.9).toFixed(2)} - $${(latestData.high * 1.1).toFixed(2)}`;
+        
+        // Trading Information
         document.getElementById('stat-volume').textContent = Math.round(latestData.volume).toLocaleString();
+        document.getElementById('stat-avg-volume').textContent = Math.round(latestData.volume * 1.15).toLocaleString(); // Mock avg volume
+        document.getElementById('stat-market-cap').textContent = '$2.85T'; // Mock market cap
+        document.getElementById('stat-pe').textContent = '29.35'; // Mock P/E ratio
+        document.getElementById('stat-dividend').textContent = '0.55%'; // Mock dividend yield
+        document.getElementById('stat-earnings').textContent = 'Oct 26, 2025'; // Mock earnings date
+        
+        // Financial Ratios
+        document.getElementById('stat-beta').textContent = '1.29'; // Mock beta
+        document.getElementById('stat-eps').textContent = '$6.11'; // Mock EPS
+        document.getElementById('stat-revenue').textContent = '$383.29B'; // Mock revenue
+        document.getElementById('stat-revenue-growth').textContent = '2.84%'; // Mock revenue growth
+        document.getElementById('stat-ebitda').textContent = '$138.24B'; // Mock EBITDA
+        document.getElementById('stat-profit-margin').textContent = '25.31%'; // Mock profit margin
+        
+        // Valuation Metrics
+        document.getElementById('stat-price-sales').textContent = '7.42'; // Mock P/S ratio
+        document.getElementById('stat-price-book').textContent = '45.32'; // Mock P/B ratio
+        document.getElementById('stat-peg').textContent = '1.85'; // Mock PEG ratio
+        document.getElementById('stat-enterprise-value').textContent = '$2.87T'; // Mock enterprise value
+        document.getElementById('stat-roe').textContent = '147.92%'; // Mock ROE
+        document.getElementById('stat-roa').textContent = '27.92%'; // Mock ROA
     }
 }
 

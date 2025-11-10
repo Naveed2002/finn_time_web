@@ -155,25 +155,62 @@
                 <!-- Company Info -->
                 <div class="row mb-4">
                     <div class="col-md-12">
-                        <div class="d-flex justify-content-between align-items-center flex-wrap">
-                            <div>
-                                <h1 class="h2" id="company-name">Apple Inc. (AAPL)</h1>
-                                <p class="lead" id="company-sector">Technology Sector</p>
+                        <div class="card bg-dark">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                                    <div>
+                                        <h1 class="h2" id="company-name">Apple Inc. (AAPL)</h1>
+                                        <p class="lead" id="company-sector">Technology Sector</p>
+                                        <p class="text-muted" id="company-description">Leading technology company designing innovative consumer electronics, computer software, and online services.</p>
+                                    </div>
+                                    <div class="text-end mt-3 mt-md-0">
+                                        <h2 class="text-success" id="current-price">$182.52</h2>
+                                        <p class="text-success" id="price-change"><i class="fas fa-arrow-up"></i> +1.2%</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Company Details -->
+                                <div class="row mt-4">
+                                    <div class="col-md-6">
+                                        <div class="d-flex mb-2">
+                                            <span class="text-muted me-2"><i class="fas fa-industry me-1"></i>Industry:</span>
+                                            <span id="company-industry">Consumer Electronics</span>
+                                        </div>
+                                        <div class="d-flex mb-2">
+                                            <span class="text-muted me-2"><i class="fas fa-building me-1"></i>Headquarters:</span>
+                                            <span id="company-headquarters">Cupertino, California, USA</span>
+                                        </div>
+                                        <div class="d-flex mb-2">
+                                            <span class="text-muted me-2"><i class="fas fa-user-tie me-1"></i>CEO:</span>
+                                            <span id="company-ceo">Tim Cook</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="d-flex mb-2">
+                                            <span class="text-muted me-2"><i class="fas fa-calendar-alt me-1"></i>Founded:</span>
+                                            <span id="company-founded">April 1, 1976</span>
+                                        </div>
+                                        <div class="d-flex mb-2">
+                                            <span class="text-muted me-2"><i class="fas fa-users me-1"></i>Employees:</span>
+                                            <span id="company-employees">164,000</span>
+                                        </div>
+                                        <div class="d-flex mb-2">
+                                            <span class="text-muted me-2"><i class="fas fa-globe me-1"></i>Website:</span>
+                                            <span id="company-website"><a href="#" class="text-success">www.apple.com</a></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Currency Switcher -->
+                                <div class="mt-3">
+                                    <label for="currency-select" class="me-2"><i class="fas fa-dollar-sign me-1"></i>Currency:</label>
+                                    <select class="form-select d-inline w-auto" id="currency-select">
+                                        <option value="USD" selected>USD ($)</option>
+                                        <option value="EUR">EUR (€)</option>
+                                        <option value="GBP">GBP (£)</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="text-end mt-3 mt-md-0">
-                                <h2 class="text-success" id="current-price">$182.52</h2>
-                                <p class="text-success" id="price-change"><i class="fas fa-arrow-up"></i> +1.2%</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Currency Switcher -->
-                        <div class="mt-3">
-                            <label for="currency-select" class="me-2"><i class="fas fa-dollar-sign me-1"></i>Currency:</label>
-                            <select class="form-select d-inline w-auto" id="currency-select">
-                                <option value="USD" selected>USD ($)</option>
-                                <option value="EUR">EUR (€)</option>
-                                <option value="GBP">GBP (£)</option>
-                            </select>
                         </div>
                     </div>
                 </div>
@@ -214,50 +251,174 @@
                         <h2 class="mb-4"><i class="fas fa-chart-bar me-2"></i>Key Statistics</h2>
                         <div class="card bg-dark">
                             <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-dark">
-                                        <tbody>
-                                            <tr>
-                                                <td><strong><i class="fas fa-door-open me-1"></i>Open</strong></td>
-                                                <td id="stat-open">$180.45</td>
-                                                <td><strong><i class="fas fa-door-closed me-1"></i>Previous Close</strong></td>
-                                                <td id="stat-prev-close">$180.32</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong><i class="fas fa-arrows-alt-v me-1"></i>Day's Range</strong></td>
-                                                <td id="stat-range">$180.12 - $183.20</td>
-                                                <td><strong><i class="fas fa-calendar me-1"></i>52 Week Range</strong></td>
-                                                <td id="stat-52w-range">$124.17 - $198.23</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong><i class="fas fa-sort-amount-up me-1"></i>Volume</strong></td>
-                                                <td id="stat-volume">45,230,120</td>
-                                                <td><strong><i class="fas fa-chart-line me-1"></i>Avg. Volume</strong></td>
-                                                <td id="stat-avg-volume">52,340,500</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong><i class="fas fa-coins me-1"></i>Market Cap</strong></td>
-                                                <td id="stat-market-cap">$2.85T</td>
-                                                <td><strong><i class="fas fa-percentage me-1"></i>P/E Ratio</strong></td>
-                                                <td id="stat-pe">29.35</td>
-                                            </tr>
-                                            <tr>
-                                                <td><strong><i class="fas fa-percentage me-1"></i>Dividend Yield</strong></td>
-                                                <td id="stat-dividend">0.55%</td>
-                                                <td><strong><i class="fas fa-calendar-check me-1"></i>Earnings Date</strong></td>
-                                                <td id="stat-earnings">Oct 26, 2025</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                <div class="row">
+                                    <!-- Price Information -->
+                                    <div class="col-md-6 mb-4">
+                                        <h5 class="mb-3"><i class="fas fa-dollar-sign me-2"></i>Price Information</h5>
+                                        <div class="table-responsive">
+                                            <table class="table table-dark">
+                                                <tbody>
+                                                    <tr>
+                                                        <td><strong><i class="fas fa-door-open me-1"></i>Open</strong></td>
+                                                        <td id="stat-open">$180.45</td>
+                                                        <td><strong><i class="fas fa-door-closed me-1"></i>Previous Close</strong></td>
+                                                        <td id="stat-prev-close">$180.32</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong><i class="fas fa-arrows-alt-v me-1"></i>Day's Range</strong></td>
+                                                        <td id="stat-range">$180.12 - $183.20</td>
+                                                        <td><strong><i class="fas fa-calendar me-1"></i>52 Week Range</strong></td>
+                                                        <td id="stat-52w-range">$124.17 - $198.23</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong><i class="fas fa-arrow-up me-1"></i>52 Week High</strong></td>
+                                                        <td id="stat-52w-high">$198.23</td>
+                                                        <td><strong><i class="fas fa-arrow-down me-1"></i>52 Week Low</strong></td>
+                                                        <td id="stat-52w-low">$124.17</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Trading Information -->
+                                    <div class="col-md-6 mb-4">
+                                        <h5 class="mb-3"><i class="fas fa-chart-line me-2"></i>Trading Information</h5>
+                                        <div class="table-responsive">
+                                            <table class="table table-dark">
+                                                <tbody>
+                                                    <tr>
+                                                        <td><strong><i class="fas fa-sort-amount-up me-1"></i>Volume</strong></td>
+                                                        <td id="stat-volume">45,230,120</td>
+                                                        <td><strong><i class="fas fa-chart-line me-1"></i>Avg. Volume</strong></td>
+                                                        <td id="stat-avg-volume">52,340,500</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong><i class="fas fa-coins me-1"></i>Market Cap</strong></td>
+                                                        <td id="stat-market-cap">$2.85T</td>
+                                                        <td><strong><i class="fas fa-percentage me-1"></i>P/E Ratio</strong></td>
+                                                        <td id="stat-pe">29.35</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong><i class="fas fa-percentage me-1"></i>Dividend Yield</strong></td>
+                                                        <td id="stat-dividend">0.55%</td>
+                                                        <td><strong><i class="fas fa-calendar-check me-1"></i>Earnings Date</strong></td>
+                                                        <td id="stat-earnings">Oct 26, 2025</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Financial Ratios -->
+                                    <div class="col-md-6 mb-4">
+                                        <h5 class="mb-3"><i class="fas fa-calculator me-2"></i>Financial Ratios</h5>
+                                        <div class="table-responsive">
+                                            <table class="table table-dark">
+                                                <tbody>
+                                                    <tr>
+                                                        <td><strong><i class="fas fa-chart-pie me-1"></i>Beta</strong></td>
+                                                        <td id="stat-beta">1.29</td>
+                                                        <td><strong><i class="fas fa-percentage me-1"></i>EPS (TTM)</strong></td>
+                                                        <td id="stat-eps">$6.11</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong><i class="fas fa-chart-bar me-1"></i>Revenue</strong></td>
+                                                        <td id="stat-revenue">$383.29B</td>
+                                                        <td><strong><i class="fas fa-chart-line me-1"></i>Revenue Growth</strong></td>
+                                                        <td id="stat-revenue-growth">2.84%</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong><i class="fas fa-chart-area me-1"></i>EBITDA</strong></td>
+                                                        <td id="stat-ebitda">$138.24B</td>
+                                                        <td><strong><i class="fas fa-chart-line me-1"></i>Profit Margin</strong></td>
+                                                        <td id="stat-profit-margin">25.31%</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Valuation Metrics -->
+                                    <div class="col-md-6 mb-4">
+                                        <h5 class="mb-3"><i class="fas fa-balance-scale me-2"></i>Valuation Metrics</h5>
+                                        <div class="table-responsive">
+                                            <table class="table table-dark">
+                                                <tbody>
+                                                    <tr>
+                                                        <td><strong><i class="fas fa-chart-pie me-1"></i>Price/Sales</strong></td>
+                                                        <td id="stat-price-sales">7.42</td>
+                                                        <td><strong><i class="fas fa-chart-bar me-1"></i>Price/Book</strong></td>
+                                                        <td id="stat-price-book">45.32</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong><i class="fas fa-chart-line me-1"></i>PEG Ratio</strong></td>
+                                                        <td id="stat-peg">1.85</td>
+                                                        <td><strong><i class="fas fa-coins me-1"></i>Enterprise Value</strong></td>
+                                                        <td id="stat-enterprise-value">$2.87T</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong><i class="fas fa-percentage me-1"></i>ROE</strong></td>
+                                                        <td id="stat-roe">147.92%</td>
+                                                        <td><strong><i class="fas fa-percentage me-1"></i>ROA</strong></td>
+                                                        <td id="stat-roa">27.92%</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Historical Prices -->
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <h2 class="mb-4"><i class="fas fa-history me-2"></i>Historical Prices</h2>
+                        <div class="card bg-dark">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-dark table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Open</th>
+                                                <th>High</th>
+                                                <th>Low</th>
+                                                <th>Close</th>
+                                                <th>Volume</th>
+                                                <th>Change %</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="historical-prices-body">
+                                            <tr>
+                                                <td colspan="7" class="text-center text-muted">Loading historical prices...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-secondary" id="prev-page"><i class="fas fa-arrow-left me-1"></i>Previous</button>
+                                    </div>
+                                    <div>
+                                        <span class="text-muted">Page <span id="current-page">1</span> of <span id="total-pages">10</span></span>
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-secondary" id="next-page">Next<i class="fas fa-arrow-right ms-1"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- All Stocks -->
                 <div class="row mt-4">
                     <div class="col-md-12">
+                        <h2 class="mb-4"><i class="fas fa-list me-2"></i>All Available Stocks</h2>
                         <div class="card bg-dark">
                             <div class="card-body">
                                 <div id="all-stocks-container">
