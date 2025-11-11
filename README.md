@@ -95,15 +95,4 @@ The dark theme can be customized by modifying the CSS variables in `css/style.cs
 }
 ```
 
-### Logo
-Replace `images/mainLogo_st.png` with your own logo file.
-
-## Browser Support
-
-This application works best in modern browsers that support:
-- ES6 JavaScript
-- Fetch API
-- LocalStorage
-- Geolocation API
-- Chart.js
 
