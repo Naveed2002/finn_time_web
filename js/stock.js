@@ -651,17 +651,25 @@ async function loadStockData(symbol, timeRange) {
             }
         }
         
-        // If we found the stock data in shared storage, use it
+        // If we found the stock data in shared storage, check if we need more data for the time range
         if (stockData) {
-            console.log(`Using shared data for ${symbol}`);
-            // Create a response object similar to what the API would return
-            const response = {
-                data: [stockData]
-            };
+            console.log(`Found shared data for ${symbol}, checking if we need more data for ${timeRange}`);
             
-            // Process and display the data
-            processStockData(response, timeRange, symbol);
-            return;
+            // For time ranges that need more data, we need to fetch from API
+            if (timeRange !== '1D' && timeRange !== '1M') {
+                console.log(`Time range ${timeRange} requires more data, fetching from API`);
+                // Continue to API fetch section below
+            } else {
+                console.log(`Using shared data for ${symbol}`);
+                // Create a response object similar to what the API would return
+                const response = {
+                    data: [stockData]
+                };
+                
+                // Process and display the data
+                processStockData(response, timeRange, symbol);
+                return;
+            }
         }
         
         // If no shared data, fall back to API call
@@ -670,19 +678,23 @@ async function loadStockData(symbol, timeRange) {
         let response;
         
         // Determine the appropriate function based on time range
+        let daysToFetch;
         if (timeRange === '1D') {
             // For 1D, we would use intraday data, but MarketStack free tier has limitations
             // So we'll use EOD data for all ranges in this implementation
-            response = await fetchEodData(symbol, 30); // Get 30 days for 1M view
+            daysToFetch = 30; // Get 30 days for 1D view
         } else if (timeRange === '1M') {
-            response = await fetchEodData(symbol, 30); // Get 30 days
+            daysToFetch = 30; // Get 30 days
         } else if (timeRange === '3M') {
-            response = await fetchEodData(symbol, 90); // Get 90 days
+            daysToFetch = 90; // Get 90 days
         } else if (timeRange === '1Y') {
-            response = await fetchEodData(symbol, 252); // Get ~252 trading days
+            daysToFetch = 252; // Get ~252 trading days
         } else {
-            response = await fetchEodData(symbol, 30); // Default to 30 days
+            daysToFetch = 30; // Default to 30 days
         }
+        
+        console.log(`Fetching ${daysToFetch} days of data for ${symbol}`);
+        response = await fetchEodData(symbol, daysToFetch);
         
         console.log(`API Response data for ${symbol}:`, response);
         
