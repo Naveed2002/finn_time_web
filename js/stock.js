@@ -27,6 +27,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set up event listeners
     setupEventListeners();
     
+    // Ensure IP lookup is triggered
+    if (typeof window.finnTime !== 'undefined' && typeof window.finnTime.ipLookUp === 'function') {
+        window.finnTime.ipLookUp();
+    } else {
+        // Fallback: try to trigger ipLookUp directly
+        if (typeof ipLookUp === 'function') {
+            ipLookUp();
+        }
+    }
+    
     // Try to load all stocks data from shared storage
     // Wait a bit for location data to be set by main.js
     setTimeout(() => {
