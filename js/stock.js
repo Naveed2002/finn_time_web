@@ -655,21 +655,9 @@ async function loadStockData(symbol, timeRange) {
         if (stockData) {
             console.log(`Found shared data for ${symbol}, checking if we need more data for ${timeRange}`);
             
-            // For time ranges that need more data, we need to fetch from API
-            if (timeRange !== '1D' && timeRange !== '1M') {
-                console.log(`Time range ${timeRange} requires more data, fetching from API`);
-                // Continue to API fetch section below
-            } else {
-                console.log(`Using shared data for ${symbol}`);
-                // Create a response object similar to what the API would return
-                const response = {
-                    data: [stockData]
-                };
-                
-                // Process and display the data
-                processStockData(response, timeRange, symbol);
-                return;
-            }
+            // For all time ranges, we need to fetch historical data from API since shared data only has 1 point
+            console.log(`Fetching historical data for ${symbol} from API for ${timeRange} view`);
+            // Continue to API fetch section below
         }
         
         // If no shared data, fall back to API call
